@@ -286,10 +286,10 @@ y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) = 1
 <p>Then the maximum margin problem can be written as <span class="math display">\[
 \text{arg max}_{\boldsymbol{w}, b}\frac{1}{||\boldsymbol{w}||_2} = \text{arg min}_{\boldsymbol{w}, b}||\boldsymbol{w}||_2^2 = \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2
 \]</span> where the last step is for the sake of simpler computation only. Now, the maximum margin criterion is to solve the following optimization problem: <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 &amp;\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 \\
 &amp;\text{subject to } y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1,\quad 1\le i\le N
-\end{align*}
+\end{aligned}
 \]</span></p>
 </section>
 <section id="dual-problem" class="level2" data-number="1.3">
@@ -297,10 +297,10 @@ y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) = 1
 <p>The problem above is a <strong>quadratic programming problem</strong>, which (called the <strong>primal problem</strong>) can be converted to the <strong>dual problem</strong> by using the method of <em>Lagrange multipliers</em>. Using Lagrange multipliers <span class="math inline">\(\alpha_i\ge 0\)</span> for each of the restrains, the Lagrangian function can be written as <span class="math display">\[
 L(\boldsymbol{w}, b, \boldsymbol{\alpha}) = \frac{1}{2}||\boldsymbol{w}||_2^2 + \sum_{i=1}^N \alpha_i(1- y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b))
 \]</span> where <span class="math inline">\(\boldsymbol{\alpha} = (\alpha_1,\dots,\alpha_N)\)</span>. Taking derivative with respect to <span class="math inline">\(\boldsymbol{w}\)</span> and <span class="math inline">\(b\)</span>, and set them to <span class="math inline">\(0\)</span>. After substitution and organization (see Excercise 5-3), we have the dual problem: <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 &amp;\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j \boldsymbol{x}_{i}^T\boldsymbol{x}_{j} \\
 &amp;\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
-\end{align*}
+\end{aligned}
 \]</span> After the dual problem is solved (numerically), for example, by the Sequential Minimal Optimization (SMO) algorithm (see Platt 1998), predictions for new data instances can be made by evaluating <span class="math display">\[\begin{equation*}
 s(\boldsymbol{x}) = \boldsymbol{w}^T\boldsymbol{x} + b = \sum_{i=1}^N\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x} + b
 \end{equation*}\]</span> We have not talked about how to compute <span class="math inline">\(b\)</span> yet. Noting that for any support vector <span class="math inline">\(\boldsymbol{x}_s\)</span>, the following equation is satisfied: <span class="math display">\[\begin{equation*}
@@ -324,28 +324,30 @@ b = \frac{1}{N_{\mathcal{S}}}\sum_{i\in \mathcal{S}}\left(y_i-\sum_{j=1}^N\alpha
 </section>
 <section id="kernel-functions" class="level2" data-number="1.4">
 <h2 data-number="1.4" class="anchored" data-anchor-id="kernel-functions"><span class="header-section-number">1.4</span> Kernel Functions</h2>
-<p>A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be <span class="math inline">\(\phi(\boldsymbol{x})\)</span>. All of the above formulas (s(), primal problem, and dual problem) need to be changed so that <span class="math inline">\(\boldsymbol{x}\)</span>, <span class="math inline">\(\boldsymbol{x}_i\)</span>, and <span class="math inline">\(\boldsymbol{x}_j\)</span> will be replaced by <span class="math inline">\(\phi(\boldsymbol{x})\)</span>, <span class="math inline">\(\phi(\boldsymbol{x}_i)\)</span>, and <span class="math inline">\(\phi(\boldsymbol{x}_j)\)</span>, respectively. The problem is computing inner products such as <span class="math inline">\(\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)\)</span> can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function <span class="math inline">\(k(\boldsymbol{x}, \boldsymbol{y})\)</span> exists and <span class="math display">\[\begin{align*}
+<p>A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be <span class="math inline">\(\phi(\boldsymbol{x})\)</span>. All of the above formulas (<span class="math inline">\(s(\boldsymbol{x})\)</span>, primal problem, and dual problem) need to be changed so that <span class="math inline">\(\boldsymbol{x}\)</span>, <span class="math inline">\(\boldsymbol{x}_i\)</span>, and <span class="math inline">\(\boldsymbol{x}_j\)</span> will be replaced by <span class="math inline">\(\phi(\boldsymbol{x})\)</span>, <span class="math inline">\(\phi(\boldsymbol{x}_i)\)</span>, and <span class="math inline">\(\phi(\boldsymbol{x}_j)\)</span>, respectively. The problem is computing inner products such as <span class="math inline">\(\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)\)</span> can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function <span class="math inline">\(k(\boldsymbol{x}, \boldsymbol{y})\)</span> exists and <span class="math display">\[
+\begin{aligned}
 k(\boldsymbol{x}_i, \boldsymbol{x}_j) = \phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)
-\end{align*}\]</span> That is, there is a function that calculates the inner product of mapped features <span class="math inline">\(\phi(\boldsymbol{x})\)</span> in the higher-dimensional space by evaluating a function defined in the original (low-dimensional) feature space. Such functions <span class="math inline">\(k(\cdot, \cdot)\)</span> are called <strong>kernel functions</strong>. With the kernel function, the dual problem can be rewritten as <span class="math display">\[
-\begin{align*}
+\end{aligned}
+\]</span> That is, there is a function that calculates the inner product of mapped features <span class="math inline">\(\phi(\boldsymbol{x})\)</span> in the higher-dimensional space by evaluating a function defined in the original (low-dimensional) feature space. Such functions <span class="math inline">\(k(\cdot, \cdot)\)</span> are called <strong>kernel functions</strong>. With the kernel function, the dual problem can be rewritten as <span class="math display">\[
+\begin{aligned}
 &amp;\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j k(\boldsymbol{x}_{i},\boldsymbol{x}_{j}) \\
 &amp;\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
-\end{align*}
+\end{aligned}
 \]</span> and the linear function <span class="math inline">\(s(\boldsymbol{x})\)</span> becomes <span class="math display">\[\begin{equation*}
 s(\boldsymbol{x}) = \sum_{i=1}^N\alpha_iy_ik(\boldsymbol{x}_i,\boldsymbol{x}) + b
 \end{equation*}\]</span> Since, we are not sure what <span class="math inline">\(\phi(\cdot)\)</span> looks like, and thus finding the kernel function corresponding to <span class="math inline">\(\phi(\cdot)\)</span> is not possible. As a result, we often turn to some commonly used kernel functions as shown below, and in fact, each of them implicitly defines a map <span class="math inline">\(\phi(\cdot)\)</span>. <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \text{ Linear: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \boldsymbol{x}^T\boldsymbol{y} \\
 \text { Polynomial: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right)^{d} \\
 \text { Gaussian RBF: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_2^{2}\right) \\
 \text { Sigmoid: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \tanh \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right) \\
 \text{ Laplacian: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_1\right)
-\end{align*}
+\end{aligned}
 \]</span> These standard kernel functions can be combined to form new kernel functions. For instance, a linear combination of kernel functions is still a kernel function.</p>
 </section>
 <section id="soft-margin" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="soft-margin"><span class="header-section-number">1.5</span> Soft Margin</h2>
-<p>Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary (<span class="math inline">\(y_is(\boldsymbol{x}_i)\lt 0\)</span>), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target <span class="math inline">\(+1\)</span>) on the wrong side, and one instance of the red square class (target <span class="math inline">\(-1\)</span>). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called <strong>soft margin classification</strong>.</p>
+<p>Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary (<span class="math inline">\(y_is(\boldsymbol{x}_i)&lt; 0\)</span>), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target <span class="math inline">\(+1\)</span>) on the wrong side, and one instance of the red square class (target <span class="math inline">\(-1\)</span>). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called <strong>soft margin classification</strong>.</p>
 <p><img src="image/softmargin.png" width="500" height="500"></p>
 <p>A possible cost function to achieve a balance of maximum margin and limiting cases of being on the wrong side and inside the margin boundary (characterized by <span class="math inline">\(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)&lt;1\)</span>) is:</p>
 <p><span class="math display">\[\begin{equation*}
@@ -355,7 +357,7 @@ s(\boldsymbol{x}) = \sum_{i=1}^N\alpha_iy_ik(\boldsymbol{x}_i,\boldsymbol{x}) + 
 <p><span class="math display">\[\begin{equation*}
 L_{\text{hinge}}(x) = \max(0, 1-x)
 \end{equation*}\]</span></p>
-<div id="6ef45d56" class="cell" data-execution_count="1">
+<div id="6e363b8a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot of a hinge function</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -376,21 +378,23 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 </div>
 </div>
-<p>With the hinge loss, the soft margin objective function can be written as:</p>
-<p><span class="math display">\[\begin{align*}
+<p>With the hinge loss, the soft margin objective function can be written as: <span class="math display">\[
+\begin{aligned}
 &amp;\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)) \\
 &amp;= \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\max(0, 1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))
-\end{align*}\]</span></p>
-<p>The hinge loss function penalizes more those points farther away from the boundary. Introduce <strong>slack variables</strong> <span class="math inline">\(\xi_i\ge 0\)</span>, <span class="math inline">\(1\le i\le N\)</span>, and <span class="math inline">\(\xi_i = L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))=|y_i-s(\boldsymbol{x}_i)|\)</span>. The objective function can be rewritten as</p>
-<p><span class="math display">\[\begin{align*}
+\end{aligned}
+\]</span></p>
+<p>The hinge loss function penalizes more those points farther away from the boundary. Introduce <strong>slack variables</strong> <span class="math inline">\(\xi_i\ge 0\)</span>, <span class="math inline">\(1\le i\le N\)</span>, and <span class="math inline">\(\xi_i = L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))=|y_i-s(\boldsymbol{x}_i)|\)</span>. The objective function can be rewritten as <span class="math display">\[
+\begin{aligned}
 &amp;\text{arg min}_{\boldsymbol{w}, b,\varepsilon_i}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\varepsilon_i \\
 &amp;\text{subject to } y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i,\quad \varepsilon_i\ge 0,\, i=1,\dots, N
-\end{align*}\]</span> This is still a quadratic problem and similarly a dual problem can be obtained using Lagrange multiplier.</p>
+\end{aligned}
+\]</span> This is still a quadratic problem and similarly a dual problem can be obtained using Lagrange multiplier.</p>
 <p><strong>Excercise 5-5</strong></p>
 <p>Show the constraints <span class="math inline">\(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i\)</span>, <span class="math inline">\(i=1,\dots, N\)</span> need to hold for the soft margin classification problem.</p>
 <p><strong>Example 5-1</strong></p>
 <p>Build a binary SVM classifier for the Iris Dataset to classify virginica and non-virginica. Consider two cases: 1) using sepal length and petal width as features; 2) using petal length and petal width as features.</p>
-<div id="651ab7a3" class="cell" data-execution_count="2">
+<div id="00de5109" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> datasets</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
@@ -573,7 +577,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]), 'frame': None, 'target_names': array(['setosa', 'versicolor', 'virginica'], dtype='&lt;U10'), 'DESCR': '.. _iris_dataset:\n\nIris plants dataset\n--------------------\n\n**Data Set Characteristics:**\n\n:Number of Instances: 150 (50 in each of three classes)\n:Number of Attributes: 4 numeric, predictive attributes and the class\n:Attribute Information:\n    - sepal length in cm\n    - sepal width in cm\n    - petal length in cm\n    - petal width in cm\n    - class:\n            - Iris-Setosa\n            - Iris-Versicolour\n            - Iris-Virginica\n\n:Summary Statistics:\n\n============== ==== ==== ======= ===== ====================\n                Min  Max   Mean    SD   Class Correlation\n============== ==== ==== ======= ===== ====================\nsepal length:   4.3  7.9   5.84   0.83    0.7826\nsepal width:    2.0  4.4   3.05   0.43   -0.4194\npetal length:   1.0  6.9   3.76   1.76    0.9490  (high!)\npetal width:    0.1  2.5   1.20   0.76    0.9565  (high!)\n============== ==== ==== ======= ===== ====================\n\n:Missing Attribute Values: None\n:Class Distribution: 33.3% for each of 3 classes.\n:Creator: R.A. Fisher\n:Donor: Michael Marshall (MARSHALL%PLU@io.arc.nasa.gov)\n:Date: July, 1988\n\nThe famous Iris database, first used by Sir R.A. Fisher. The dataset is taken\nfrom Fisher\'s paper. Note that it\'s the same as in R, but not as in the UCI\nMachine Learning Repository, which has two wrong data points.\n\nThis is perhaps the best known database to be found in the\npattern recognition literature.  Fisher\'s paper is a classic in the field and\nis referenced frequently to this day.  (See Duda &amp; Hart, for example.)  The\ndata set contains 3 classes of 50 instances each, where each class refers to a\ntype of iris plant.  One class is linearly separable from the other 2; the\nlatter are NOT linearly separable from each other.\n\n|details-start|\n**References**\n|details-split|\n\n- Fisher, R.A. "The use of multiple measurements in taxonomic problems"\n  Annual Eugenics, 7, Part II, 179-188 (1936); also in "Contributions to\n  Mathematical Statistics" (John Wiley, NY, 1950).\n- Duda, R.O., &amp; Hart, P.E. (1973) Pattern Classification and Scene Analysis.\n  (Q327.D83) John Wiley &amp; Sons.  ISBN 0-471-22361-1.  See page 218.\n- Dasarathy, B.V. (1980) "Nosing Around the Neighborhood: A New System\n  Structure and Classification Rule for Recognition in Partially Exposed\n  Environments".  IEEE Transactions on Pattern Analysis and Machine\n  Intelligence, Vol. PAMI-2, No. 1, 67-71.\n- Gates, G.W. (1972) "The Reduced Nearest Neighbor Rule".  IEEE Transactions\n  on Information Theory, May 1972, 431-433.\n- See also: 1988 MLC Proceedings, 54-64.  Cheeseman et al"s AUTOCLASS II\n  conceptual clustering system finds 3 classes in the data.\n- Many, many more ...\n\n|details-end|\n', 'feature_names': ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)'], 'filename': 'iris.csv', 'data_module': 'sklearn.datasets.data'}</code></pre>
 </div>
 </div>
-<div id="58b4e7c7" class="cell" data-execution_count="3">
+<div id="c5cee230" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> svm_clf[<span class="st">"scaler"</span>].transform(X)</span>
@@ -598,7 +602,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 </div>
 </div>
-<div id="a914e3a2" class="cell" data-execution_count="4">
+<div id="f3f1b94f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use petal length and width as features</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris[<span class="st">"data"</span>][:, <span class="dv">2</span>:]  <span class="co"># petal length and width</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
@@ -630,7 +634,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 <p><strong>Example 5-2</strong></p>
 <p>Consider isotropic Gaussian blobs for binary classification (use sklearn.datasets.make_blobs). Use a sigmoid kernel with <span class="math inline">\(\gamma\)</span> set to “scale” to train a SVM.</p>
-<div id="511d352a" class="cell" data-execution_count="5">
+<div id="f57f4cdf" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate two isotropic Gaussian blobs with two features, each blob has 200 data points</span></span>
@@ -647,7 +651,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 </div>
 </div>
-<div id="21bad6e4" class="cell" data-execution_count="6">
+<div id="72f8a58f" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train SVM with a sigmoid kernel</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>svm_classifier <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'sigmoid'</span>, gamma<span class="op">=</span><span class="st">'scale'</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>svm_classifier.fit(X, y)</span>
@@ -684,7 +688,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 <p><strong>Example 5-3</strong></p>
 <p>Train an SVM for two circles (sklearn.datasets.make_circles) using a Gaussin rbf kernel with <span class="math inline">\(\gamma=0.7\)</span>.</p>
-<div id="fba381e9" class="cell" data-ein.hycell="false" data-ein.tags="worksheet-0" data-slideshow="{&quot;slide_type&quot;:&quot;-&quot;}" data-execution_count="7">
+<div id="69207173" class="cell" data-ein.hycell="false" data-ein.tags="worksheet-0" data-slideshow="{&quot;slide_type&quot;:&quot;-&quot;}" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two circles with a total number of 200 points, </span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a scale factor of 0.3 between inner and outer circle in the range [0, 1)</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># and a standard deviation of 0.1 of Gaussian noise added to the data.</span></span>
@@ -706,7 +710,7 @@ L_{\text{hinge}}(x) = \max(0, 1-x)
 </div>
 </div>
 </div>
-<div id="b651a66a" class="cell" data-execution_count="8">
+<div id="5fcc270e" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># generage grid</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(X[:,<span class="dv">0</span>].<span class="bu">min</span>(), X[:,<span class="dv">0</span>].<span class="bu">max</span>(), <span class="dv">400</span>)</span>
@@ -755,7 +759,7 @@ L_{\epsilon}(x) =
 <p>Scikit-Learn’s LinearSVR class can perform linear SVM Regression, and SVR can perform kernelized SVM model for nonlinear regression tasks.</p>
 <p><strong>Example 5-4</strong></p>
 <p>Consider the function <span class="math inline">\(y=f(x)=\sin(x)\)</span>. Create a dataset of <span class="math inline">\(50\)</span> instances with <span class="math inline">\(x\in (0,5)\)</span> and Build SVM regression models based on the data using three kernels: linear, rbf and polynomial of degree 3.</p>
-<div id="044a2bdf" class="cell" data-execution_count="9">
+<div id="846c1121" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVR</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ndata <span class="op">=</span> <span class="dv">50</span></span>

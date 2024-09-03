@@ -287,7 +287,7 @@ p_{1,1} = 0.7, p_{1,2} = 0.3, p_{2,1} = 0.4, p_{1,2} = 0.6, p_{3,1} = 0.8, p_{3,
 <p>In the bagging algorithm above, we assume the sampling is done with replacement. In the case of no replacement, the method is called <strong>pasting</strong>. In some cases, we may want to sample from the feature space (i.e., use a subset of features), e.g., when the dimension of the feature space is large. If both the features and data points are randomly selected to create distinct training sets for individual models, then the method is called <strong>random patches</strong>. If only the features are sampled and all the data points are used for the individual models, then the method is called <strong>random subspaces</strong>. In addition, we noticed an obvious advantage of applying bagging (or pasting, random patches, random subspaces), which is training the individual learners can be easily parallelized. This property enables us to train a ensemble model with a large number of components.</p>
 <p><strong>Example 7-1</strong></p>
 <p>Construct a bagging ensemble of 50 decision trees with no regularization for the Iris dataset. Use the petal length and width as features. Each tree component is trained with 100 bootstrapped instances.</p>
-<div id="d1ba1845" class="cell" data-execution_count="1">
+<div id="ec3d5863" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier</span>
@@ -715,7 +715,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                   n_estimators=50, random_state=32)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox"><label for="sk-estimator-id-2" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">estimator: DecisionTreeClassifier</label><div class="sk-toggleable__content fitted"><pre>DecisionTreeClassifier()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-3" type="checkbox"><label for="sk-estimator-id-3" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;DecisionTreeClassifier<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.4/modules/generated/sklearn.tree.DecisionTreeClassifier.html">?<span>Documentation for DecisionTreeClassifier</span></a></label><div class="sk-toggleable__content fitted"><pre>DecisionTreeClassifier()</pre></div> </div></div></div></div></div></div></div></div></div>
 </div>
 </div>
-<div id="36e38fdc" class="cell" data-execution_count="2">
+<div id="a6e46fd8" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># generage grid</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(X[:,<span class="dv">0</span>].<span class="bu">min</span>()<span class="op">-</span><span class="fl">0.1</span>, X[:,<span class="dv">0</span>].<span class="bu">max</span>()<span class="op">+</span><span class="fl">0.1</span>, <span class="dv">100</span>)</span>
@@ -766,7 +766,7 @@ s_{\text{OOB}} = \frac{1}{N} \sum_{i=1}^N\mathbb{I}(f^{\text{E}}_{\text{OOB}}(\b
 e_{\text{OOB}} = \frac{1}{N} \sum_{i=1}^N\mathbb{I}(f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}_i)\ne y_i) = 1- s_{\text{OOB}}
 \end{equation*}\]</span></p>
 <p>We now continue with the previous example and compute the OOB score.</p>
-<div id="eb97ca69" class="cell" data-execution_count="3">
+<div id="a1ab6963" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The difference is to set oob_score=True</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>bag_clf <span class="op">=</span> BaggingClassifier(estimator<span class="op">=</span>DecisionTreeClassifier(), n_estimators<span class="op">=</span><span class="dv">50</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                            max_samples<span class="op">=</span><span class="dv">100</span>, oob_score<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">32</span>)</span>
@@ -1181,7 +1181,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
                   n_estimators=50, oob_score=True, random_state=32)</pre></div> </div></div><div class="sk-parallel"><div class="sk-parallel-item"><div class="sk-item"><div class="sk-label-container"><div class="sk-label fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-5" type="checkbox"><label for="sk-estimator-id-5" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">estimator: DecisionTreeClassifier</label><div class="sk-toggleable__content fitted"><pre>DecisionTreeClassifier()</pre></div> </div></div><div class="sk-serial"><div class="sk-item"><div class="sk-estimator fitted sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-6" type="checkbox"><label for="sk-estimator-id-6" class="sk-toggleable__label fitted sk-toggleable__label-arrow fitted">&nbsp;DecisionTreeClassifier<a class="sk-estimator-doc-link fitted" rel="noreferrer" target="_blank" href="https://scikit-learn.org/1.4/modules/generated/sklearn.tree.DecisionTreeClassifier.html">?<span>Documentation for DecisionTreeClassifier</span></a></label><div class="sk-toggleable__content fitted"><pre>DecisionTreeClassifier()</pre></div> </div></div></div></div></div></div></div></div></div>
 </div>
 </div>
-<div id="9a03ca40" class="cell" data-execution_count="4">
+<div id="9cc19052" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now we can see what the OOB socre is:</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>bag_clf.oob_score_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -1189,7 +1189,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 </div>
 <p>To see the detailed information on <span class="math inline">\(f^{\text{E}}_{\text{OOB}}\)</span> for each data instance <span class="math inline">\(\boldsymbol{x}\)</span>, we can do</p>
-<div id="d3ff46ea" class="cell" data-execution_count="5">
+<div id="0caa159b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bag_clf.oob_decision_function_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>array([[1.        , 0.        , 0.        ],
@@ -1351,7 +1351,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <h2 data-number="3.2" class="anchored" data-anchor-id="random-forests"><span class="header-section-number">3.2</span> Random Forests</h2>
 <p>Random Forest (RF) is a variation of bagging. The motivation behind RF is to create training datasets for individual trees that are less dependent on each other (a collection of decorrelated trees). To this end, more randomness is introduced in the sampling process. For each individual model, a bootstrapped sample is first randomly selected. In the following process that construct a decision tree, for each node, instead of looking at all the possible choices of feature for a split and all the split points, RF randomly selects a subset of <span class="math inline">\(k\)</span> features, where <span class="math inline">\(k&lt;d\)</span>, a split criterion is decided based on the subset of features. Note that if <span class="math inline">\(k=d\)</span>, then the ensemble is simply a regular bagging of decision trees. Usually, <span class="math inline">\(k\)</span> is chosen as <span class="math inline">\(\log_2 d\)</span>. The randomness resulting from randomly sampling the features increase the independency of the individual models in the ensemble.</p>
 <p>Now we use <em>RandomForestClassifier</em> to perform RF with Python for the wine data set (https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-dataset).</p>
-<div id="1edb886d" class="cell" data-execution_count="6">
+<div id="68c83c9d" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_wine</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
@@ -1382,7 +1382,7 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="importance-score-associate-with-random-forests"><span class="header-section-number">3.2.1</span> Importance Score associate with Random Forests</h3>
 <p>In Random Forests, feature importance scores are a byproduct that can be used to evaluate the significance of each feature in predicting the target variable. Feature importance is an important topic in machine learning interpretability/explainability. Many models do not carry built-in feature importance scores as RF, and hence one has to apply some model-agnostic methods to compute those scores. As a result, this is a key advantage of Random Forests, as they directly provide a way to understand which features are most influential in the model’s predictions.</p>
 <p>The most common method for calculating feature importance for RF is by considering the how much each feature contributes to reducing the impurity (e.g., Gini impurity) in the decision trees within the Random Forest. For each feature, the decrease in impurity is averaged over all the trees in the forest. A feature that results in a significant decrease in impurity is considered more important.</p>
-<div id="9da6ce64" class="cell" data-execution_count="7">
+<div id="2f3e9f97" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print out the feature importances for all features:</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'feature importance:'</span>, rf_clf.feature_importances_)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
@@ -1439,7 +1439,7 @@ proline 0.1306809883643975</code></pre>
 \alpha_m = \frac{1}{2} \ln \left(\frac{1 - \epsilon_m}{\epsilon_m}\right)
 \end{equation*}\]</span></p>
 <p>The smaller <span class="math inline">\(\epsilon_m\)</span>, the larger the weight <span class="math inline">\(\alpha_m\)</span>, as seen below. As <span class="math inline">\(\alpha_m\)</span> approaches <span class="math inline">\(0.5\)</span> (meaning approaching a random model), <span class="math inline">\(\alpha_m\)</span> is close to 0.</p>
-<div id="b2558b8a" class="cell" data-execution_count="8">
+<div id="3a1ce16b" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>eps <span class="op">=</span> np.linspace(<span class="fl">0.00001</span>, <span class="fl">0.5</span>, <span class="dv">100</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>plt.plot(eps, np.log((<span class="dv">1</span><span class="op">-</span>eps)<span class="op">/</span>eps), <span class="st">'b-'</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$\epsilon_m$'</span>)</span>
@@ -1475,7 +1475,7 @@ f^{\text{E}}(\boldsymbol{x}) = \text{sign} \left( \sum_{m=1}^{M} \alpha_m \cdot 
 <p>The principles behind these formulas are the minimization of an exponential loss function (see Friedman (2000)). Due to the complexity of the derivation, we will leave it out.</p>
 <p><strong>Example 7-2</strong></p>
 <p>Apply AdaBoost to the breast cancer dataset (https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-dataset). The weak learners are decision trees with a maximum depth of 1.</p>
-<div id="34f838d4" class="cell" data-execution_count="9">
+<div id="044c1893" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> AdaBoostClassifier</span>
@@ -1509,7 +1509,7 @@ f^{\text{E}}(\boldsymbol{x}) = \text{sign} \left( \sum_{m=1}^{M} \alpha_m \cdot 
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="gradient-boosting"><span class="header-section-number">3.3.2</span> Gradient Boosting</h3>
 <p>Gradient Boosting builds models sequentially in the way that each subsequent model is trained to correct the residual errors of the combined predictions from previous models. The final model is a weighted sum of all the individual models. The name comes from the fact that it uses gradient descent to minimize the loss function. Here are the details of the algorithm.</p>
 <p>Step 1. Initialize a model</p>
-<p>The initial model, $f_0(), $used in gradient boosting is typically a constant function, and the lost function <span class="math inline">\(L\)</span> is typically the Mean Squared Error (MSE). Hence the initial model is:</p>
+<p>The initial model, <span class="math inline">\(f_0(\boldsymbol{x})\)</span>, used in gradient boosting is typically a constant function, and the lost function <span class="math inline">\(L\)</span> is typically the Mean Squared Error (MSE). Hence the initial model is:</p>
 <p><span class="math display">\[\begin{equation*}
 f_0(\boldsymbol{x}) = \arg \min_c \sum_{i=1}^{N} L(y_i, c)
 \end{equation*}\]</span></p>
@@ -1526,7 +1526,6 @@ r_i^{(m)} = -\left[\frac{\partial L(y_i, F(\boldsymbol{x}_i))}{\partial F(\bolds
 <p>Step 3. Fit the new individual model <span class="math inline">\(f_m\)</span> that approximates the residual <span class="math inline">\(r_i^{(m)}\)</span></p>
 <p><span class="math display">\[\begin{equation*}
 f_m(\boldsymbol{x}) = \arg \min_{f} \sum_{i=1}^{N} \left(r_i^{(m)} - f(\boldsymbol{x}_i)\right)^2
-
 \end{equation*}\]</span></p>
 <p>Step 4. Update the ensemble model <span class="math inline">\(F_m(\boldsymbol{x})\)</span></p>
 <p><span class="math display">\[\begin{equation*}
@@ -1540,7 +1539,7 @@ F_m(\boldsymbol{x}) = F_{m-1}(\boldsymbol{x}) + \eta f_m(\boldsymbol{x})
 <p><span class="math display">\[\begin{equation*}
 f(x) = 2x + \sin{x}
 \end{equation*}\]</span></p>
-<div id="81112f24" class="cell" data-execution_count="10">
+<div id="c5758065" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> GradientBoostingRegressor</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1603,7 +1602,7 @@ f(x) = 2x + \sin{x}
 </div>
 </div>
 <p>There is an obvious improvement by increasing <span class="math inline">\(M\)</span> from 3 to 10. Further increasing <span class="math inline">\(M\)</span> to 20 does not lead to obvious change of the ensemble model. The gradient boosting algorithm tells us that the ensemble model is obtained iteratively by adding the component that approximates the previous residuals. We verify this by not using the built-in GradientBoostingRegressor class.</p>
-<div id="ab8a1d87" class="cell" data-execution_count="11">
+<div id="82fba378" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">3</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">21</span>))</span>
@@ -1684,7 +1683,7 @@ f(x) = 2x + \sin{x}
 <section id="optimal-ensemble-size" class="level3" data-number="3.3.3">
 <h3 data-number="3.3.3" class="anchored" data-anchor-id="optimal-ensemble-size"><span class="header-section-number">3.3.3</span> Optimal Ensemble Size</h3>
 <p>We can use a validation set to monitor the model’s performance and perform <em>early stopping</em> when the model’s performance on the validation set starts to decrease. The Python code below does the job.</p>
-<div id="45460e26" class="cell" data-execution_count="12">
+<div id="8059a627" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We use the same synthetic data</span></span>
