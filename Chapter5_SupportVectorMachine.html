@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.47">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Support Vector Machines</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Support Vector Machines</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>Support vector machines (SVM)</em>, developed by Cortes and Vapnik (Ref. 1), is a powerful machine learning tool that can be applied to both classification and regression problems. When applied as a classifier, it is called a <em>support vector classifier</em>, and a <em>support vector regressor</em> when dealing with regression tasks. In this chapter, we will explore the theoretical concepts, mathematical principles, and practical applications of SVM. We start with solving classification problems with SVM.</p>
+<section id="linear-support-vector-machines-for-classification" class="level2">
+<h2 class="anchored" data-anchor-id="linear-support-vector-machines-for-classification">Linear Support Vector Machines for Classification</h2>
+<p>Consider a binary classification problem, where the data <span class="math inline">\(D=\{(\boldsymbol{x}_1,y_1), (\boldsymbol{x}_2,y_2), \dots, (\boldsymbol{x}_N,y_N)\}\)</span>, <span class="math inline">\(y_i\in \{-1, 1\}\)</span>, are linearly separable. Our goal is to find a linear line (or a plane in 3D and a hyperplane in higher dimensions) that separates the data points. There can be infinitely many such choices, as shown in the figure below. In this example, the blue circles and red squares representing two different classes, with two features <span class="math inline">\(\boldsymbol{x}_1\)</span> and <span class="math inline">\(\boldsymbol{x}_2\)</span>. Three lines, <span class="math inline">\(l_1\)</span>, <span class="math inline">\(l_2\)</span> and <span class="math inline">\(l_3\)</span>, are plotted to show possible ways of separating the data linearly.</p>
+<p><img src="image/LinearlySeparable.png" width="500" height="500"></p>
+<p>We need some criterion to decide the “best” separating line (or plane in higher dimensions), called <strong>the decision boundary</strong>. Intuitively, we want one that lies far from both datasets, so it has the best tolerance for perturbations/noises in the training data. Such a linear decision boundary can be described as <span class="math display">\[\begin{equation*}
+s(\boldsymbol{x}) = \boldsymbol{w}^T\boldsymbol{x} + b = 0
+\end{equation*}\]</span> which is exactly the same form as those used for linear regression and logistic regression. Note that we separated the intercept <span class="math inline">\(b\)</span> from the other coefficients <span class="math inline">\(\boldsymbol{w}\)</span> for an easier discussion of SVM. Assume a feature vector <span class="math inline">\(\boldsymbol{x} = (x_1, x_2, \dots, x_d)^T\)</span> is <span class="math inline">\(d\)</span>-dimensional and the training dataset comprises <span class="math inline">\(N\)</span> instances <span class="math inline">\(\boldsymbol{x}_1, \boldsymbol{x}_2, \dots, \boldsymbol{x}_N\)</span>.</p>
+<p>Suppose the two classes are <strong>linearly separable</strong>, i.e., they can be clearly separated by the linear decision boundary. The class of points with label <span class="math inline">\(+1\)</span> satisfies <span class="math inline">\(s(\boldsymbol{x})&gt;0\)</span> and the other class satisfies <span class="math inline">\(s(\boldsymbol{x})&lt;0\)</span>. Predictions are made for new instances in the same fashion. Let <span class="math inline">\(\hat{y}(\boldsymbol{x})\)</span> represent the predicted class for a new instance with features <span class="math inline">\(\boldsymbol{x}\)</span>. We have</p>
+<p><span class="math display">\[\begin{equation}
+\hat{y}(\boldsymbol{x})=\left\{\begin{array}{l l}
+-1 &amp; \text { if } s(\boldsymbol{x})=\boldsymbol{w}^{T} \boldsymbol{x}+b&lt;0 \\
+1 &amp; \text { if } s(\boldsymbol{x})=\boldsymbol{w}^{T} \boldsymbol{x}+b &gt; 0
+\end{array}\right.
+\end{equation}\]</span></p>
+</section>
+<section id="margin" class="level2">
+<h2 class="anchored" data-anchor-id="margin">Margin</h2>
+<p>As we saw in the figure above, there can be infinitely many ways to define a linear decision boundary. A natural way to select the “optimal” boundary is to find the boundary so that it is as far as possible from both classes of data points. Such a strategy can be described with the help of the concept of <strong>margin</strong>, which is defined as the minimum distance between the boundary and any data point. In the figure below, the margin <span class="math inline">\(m\)</span>, corresponding to the distance between boundary <span class="math inline">\(l\)</span> and the data instance closest to <span class="math inline">\(l\)</span> (the red square in the upper right corner), was plotted. An “optimal” boundary can then be defined as the one that has the maximum margin and such a classifier is called a <strong>maximum margin classifier</strong>. For example, <span class="math inline">\(l^*\)</span> represents the maximum margin classifier, and <span class="math inline">\(m^*\)</span> represents the maximum margin. Notice that data instances of the two classes that are closest to the boundary <span class="math inline">\(l^*\)</span> are equidistant from it.</p>
+<p><img src="image/margin.png" width="500" height="500"></p>
+<p>We now mathematically describe the maximum margin. It can be shown that the distance between an arbitrary point <span class="math inline">\(\boldsymbol{x}\)</span> in the feature space and the decision boundary <span class="math inline">\(s(\boldsymbol{x})=\boldsymbol{w}^T\boldsymbol{x}+b=0\)</span> is <span class="math display">\[
+\frac{|s(\boldsymbol{x})|}{||\boldsymbol{w}||_2}
+\]</span> (see Excercise 5-1). Noting that <span class="math inline">\(|s(\boldsymbol{x})| = y(\boldsymbol{x})s(\boldsymbol{x})\)</span>, the distance of <span class="math inline">\(\boldsymbol{x}_i\)</span> to the decision boundary can be rewritten as: <span class="math display">\[\begin{equation}
+\frac{y_is(\boldsymbol{x}_i)}{||\boldsymbol{w}||_2} = \frac{y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)}{||\boldsymbol{w}||_2}
+\end{equation}\]</span> Margin, defined as the smallest distance between the decision boundary and any data point <span class="math inline">\(\boldsymbol{x}_i\)</span>, can be mathematically written as <span class="math display">\[
+\text{margin} = \min_{1\le i\le N}\frac{y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)}{||\boldsymbol{w}||_2}=\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b).
+\]</span> Therefore, the maximum margin is <span class="math display">\[
+\max_{\boldsymbol{w}, b}\text{margin} = \max_{\boldsymbol{w}, b}\left\{\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)\right\}
+\]</span> and our maximum margin classifier is found by computing <span class="math display">\[
+\text{arg max}_{\boldsymbol{w}, b}\left\{\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)\right\}
+\]</span> An important fact related to the distance of <span class="math inline">\(\boldsymbol{x}_i\)</span> to the decision boundary is that it is invariant to the linear transformation (rescaling) <span class="math inline">\(\boldsymbol{w}\rightarrow \alpha\boldsymbol{w}\)</span>, and <span class="math inline">\(b\rightarrow \alpha b\)</span> (but it does change the value of <span class="math inline">\(y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)\)</span>; see Excercise 5-2). As a result, we can choose the <span class="math inline">\(\alpha\)</span> such that <span class="math display">\[\begin{equation}
+y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) = 1
+\end{equation}\]</span> for the points that are closest to the decision boundary (these points are also called <strong>support vectors</strong>, and hence the name support vector machines), as shown in the figure below:</p>
+<p><img src="image/margin2.png" width="500" height="500"></p>
+<p>Then the maximum margin problem can be written as <span class="math display">\[
+\text{arg max}_{\boldsymbol{w}, b}\frac{1}{||\boldsymbol{w}||_2} = \text{arg min}_{\boldsymbol{w}, b}||\boldsymbol{w}||_2^2 = \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2
+\]</span> where the last step is for the sake of simpler computation only. Now, the maximum margin criterion is to solve the following optimization problem: <span class="math display">\[
+\begin{align*}
+&amp;\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 \\
+&amp;\text{subject to } y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1,\quad 1\le i\le N
+\end{align*}
+\]</span></p>
+</section>
+<section id="dual-problem" class="level2">
+<h2 class="anchored" data-anchor-id="dual-problem">Dual Problem</h2>
+<p>The problem above is a <strong>quadratic programming problem</strong>, which (called the <strong>primal problem</strong>) can be converted to the <strong>dual problem</strong> by using the method of <em>Lagrange multipliers</em>. Using Lagrange multipliers <span class="math inline">\(\alpha_i\ge 0\)</span> for each of the restrains, the Lagrangian function can be written as <span class="math display">\[
+L(\boldsymbol{w}, b, \boldsymbol{\alpha}) = \frac{1}{2}||\boldsymbol{w}||_2^2 + \sum_{i=1}^N \alpha_i(1- y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b))
+\]</span> where <span class="math inline">\(\boldsymbol{\alpha} = (\alpha_1,\dots,\alpha_N)\)</span>. Taking derivative with respect to <span class="math inline">\(\boldsymbol{w}\)</span> and <span class="math inline">\(b\)</span>, and set them to <span class="math inline">\(0\)</span>. After substitution and organization (see Excercise 5-3), we have the dual problem: <span class="math display">\[
+\begin{align*}
+&amp;\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j \boldsymbol{x}_{i}^T\boldsymbol{x}_{j} \\
+&amp;\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
+\end{align*}
+\]</span> After the dual problem is solved (numerically), for example, by the Sequential Minimal Optimization (SMO) algorithm (see Platt 1998), predictions for new data instances can be made by evaluating <span class="math display">\[\begin{equation*}
+s(\boldsymbol{x}) = \boldsymbol{w}^T\boldsymbol{x} + b = \sum_{i=1}^N\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x} + b
+\end{equation*}\]</span> We have not talked about how to compute <span class="math inline">\(b\)</span> yet. Noting that for any support vector <span class="math inline">\(\boldsymbol{x}_s\)</span>, the following equation is satisfied: <span class="math display">\[\begin{equation*}
+y_is(\boldsymbol{x}_s) = y_i\left(\sum_{i=1}^N\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x}_s + b\right) = 1
+\end{equation*}\]</span> and <span class="math inline">\(b\)</span> can be obtained from any of these equations. A more numerically robust way to calculate <span class="math inline">\(b\)</span> is to take the average of the <span class="math inline">\(b\)</span>’s solved for from all these equations (see Excercise 5-4): <span class="math display">\[\begin{equation*}
+b = \frac{1}{N_{\mathcal{S}}}\sum_{i\in \mathcal{S}}\left(y_i-\sum_{j=1}^N\alpha_jy_j\boldsymbol{x}_j^T\boldsymbol{x}_i\right)
+\end{equation*}\]</span> where <span class="math inline">\(\mathcal{S}\)</span> denotes the set of indices of the support vectors, and <span class="math inline">\(N_{\mathcal{S}}\)</span> is the total number of support vectors.</p>
+<p><strong>Excercise 5-1</strong></p>
+<p>Show that the distance between an arbitrary point <span class="math inline">\(\boldsymbol{x}\)</span> in the feature space and the decision boundary <span class="math inline">\(s(\boldsymbol{x})=\boldsymbol{w}^T\boldsymbol{x}+b=0\)</span> is <span class="math display">\[
+\frac{|s(\boldsymbol{x})|}{||\boldsymbol{w}||_2}
+\]</span></p>
+<p><strong>Excercise 5-2</strong></p>
+<p>Show that the distance of <span class="math inline">\(\boldsymbol{x}\)</span> to the decision boundary is invariant to the rescaling <span class="math inline">\(\boldsymbol{w}\rightarrow \alpha\boldsymbol{w}\)</span>, and <span class="math inline">\(b\rightarrow \alpha b\)</span>.</p>
+<p><strong>Excercise 5-3</strong></p>
+<p>Derive the dual problem from the primal problem for the maximum margin problem.</p>
+<p><strong>Excercise 5-4</strong></p>
+<p>Show the value of <span class="math inline">\(b\)</span> can be computed by</p>
+<p><span class="math display">\[\begin{equation*}
+    b = \frac{1}{N_{\mathcal{S}}}\sum_{i\in \mathcal{S}}\left(y_i-\sum_{j=1}^N\alpha_jy_j\boldsymbol{x}_j^T\boldsymbol{x}_i\right)
+\end{equation*}\]</span></p>
+</section>
+<section id="kernel-functions" class="level2">
+<h2 class="anchored" data-anchor-id="kernel-functions">Kernel Functions</h2>
+<p>A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be <span class="math inline">\(\phi(\boldsymbol{x})\)</span>. All of the above formulas (s(), primal problem, and dual problem) need to be changed so that <span class="math inline">\(\boldsymbol{x}\)</span>, <span class="math inline">\(\boldsymbol{x}_i\)</span>, and <span class="math inline">\(\boldsymbol{x}_j\)</span> will be replaced by <span class="math inline">\(\phi(\boldsymbol{x})\)</span>, <span class="math inline">\(\phi(\boldsymbol{x}_i)\)</span>, and <span class="math inline">\(\phi(\boldsymbol{x}_j)\)</span>, respectively. The problem is computing inner products such as <span class="math inline">\(\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)\)</span> can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function <span class="math inline">\(k(\boldsymbol{x}, \boldsymbol{y})\)</span> exists and <span class="math display">\[\begin{align*}
+k(\boldsymbol{x}_i, \boldsymbol{x}_j) = \phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)
+\end{align*}\]</span> That is, there is a function that calculates the inner product of mapped features <span class="math inline">\(\phi(\boldsymbol{x})\)</span> in the higher-dimensional space by evaluating a function defined in the original (low-dimensional) feature space. Such functions <span class="math inline">\(k(\cdot, \cdot)\)</span> are called <strong>kernel functions</strong>. With the kernel function, the dual problem can be rewritten as <span class="math display">\[
+\begin{align*}
+&amp;\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j k(\boldsymbol{x}_{i},\boldsymbol{x}_{j}) \\
+&amp;\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
+\end{align*}
+\]</span> and the linear function <span class="math inline">\(s(\boldsymbol{x})\)</span> becomes <span class="math display">\[\begin{equation*}
+s(\boldsymbol{x}) = \sum_{i=1}^N\alpha_iy_ik(\boldsymbol{x}_i,\boldsymbol{x}) + b
+\end{equation*}\]</span> Since, we are not sure what <span class="math inline">\(\phi(\cdot)\)</span> looks like, and thus finding the kernel function corresponding to <span class="math inline">\(\phi(\cdot)\)</span> is not possible. As a result, we often turn to some commonly used kernel functions as shown below, and in fact, each of them implicitly defines a map <span class="math inline">\(\phi(\cdot)\)</span>. <span class="math display">\[
+\begin{align*}
+\text{ Linear: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \boldsymbol{x}^T\boldsymbol{y} \\
+\text { Polynomial: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right)^{d} \\
+\text { Gaussian RBF: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_2^{2}\right) \\
+\text { Sigmoid: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \tanh \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right) \\
+\text{ Laplacian: } k(\boldsymbol{x}, \boldsymbol{y}) &amp;= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_1\right)
+\end{align*}
+\]</span> These standard kernel functions can be combined to form new kernel functions. For instance, a linear combination of kernel functions is still a kernel function.</p>
+</section>
+<section id="soft-margin" class="level2">
+<h2 class="anchored" data-anchor-id="soft-margin">Soft Margin</h2>
+<p>Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary (<span class="math inline">\(y_is(\boldsymbol{x}_i)\lt 0\)</span>), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target <span class="math inline">\(+1\)</span>) on the wrong side, and one instance of the red square class (target <span class="math inline">\(-1\)</span>). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called <strong>soft margin classification</strong>.</p>
+<p><img src="image/softmargin.png" width="500" height="500"></p>
+<p>A possible cost function to achieve a balance of maximum margin and limiting cases of being on the wrong side and inside the margin boundary (characterized by <span class="math inline">\(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)&lt;1\)</span>) is:</p>
+<p><span class="math display">\[\begin{equation*}
+\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N(1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))^+
+\end{equation*}\]</span></p>
+<p>where <span class="math inline">\(C&gt;0\)</span> is a constant that controls the penalty to be applied for the instances that result in violations, and <span class="math inline">\((\cdot)^+\)</span> is the <em>Heaviside step function</em> with <span class="math inline">\((0)^+=0\)</span>. However, it is nonconvex and not continuous, leading to difficulty in solving the optimization problem. Other functions can be used to replace the Heaviside step function. One example is the <strong>hinge loss function</strong>:</p>
+<p><span class="math display">\[\begin{equation*}
+L_{\text{hinge}}(x) = \max(0, 1-x)
+\end{equation*}\]</span></p>
+<div id="6ef45d56" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot of a hinge function</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">100</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.zeros(<span class="dv">100</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> <span class="bu">max</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="op">-</span>x[i])</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'b-'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'x'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Hinge Loss'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-2-output-1.png" width="571" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>With the hinge loss, the soft margin objective function can be written as:</p>
+<p><span class="math display">\[\begin{align*}
+&amp;\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)) \\
+&amp;= \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\max(0, 1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))
+\end{align*}\]</span></p>
+<p>The hinge loss function penalizes more those points farther away from the boundary. Introduce <strong>slack variables</strong> <span class="math inline">\(\xi_i\ge 0\)</span>, <span class="math inline">\(1\le i\le N\)</span>, and <span class="math inline">\(\xi_i = L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))=|y_i-s(\boldsymbol{x}_i)|\)</span>. The objective function can be rewritten as</p>
+<p><span class="math display">\[\begin{align*}
+&amp;\text{arg min}_{\boldsymbol{w}, b,\varepsilon_i}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\varepsilon_i \\
+&amp;\text{subject to } y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i,\quad \varepsilon_i\ge 0,\, i=1,\dots, N
+\end{align*}\]</span> This is still a quadratic problem and similarly a dual problem can be obtained using Lagrange multiplier.</p>
+<p><strong>Excercise 5-5</strong></p>
+<p>Show the constraints <span class="math inline">\(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i\)</span>, <span class="math inline">\(i=1,\dots, N\)</span> need to hold for the soft margin classification problem.</p>
+<p><strong>Example 5-1</strong></p>
+<p>Build a binary SVM classifier for the Iris Dataset to classify virginica and non-virginica. Consider two cases: 1) using sepal length and petal width as features; 2) using petal length and petal width as features.</p>
+<div id="651ab7a3" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> datasets</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> LinearSVC</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the data</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> datasets.load_iris()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Show what the iris dataset look like</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(iris)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Use sepal length and petal width as features</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris[<span class="st">"data"</span>][:, [<span class="dv">0</span>, <span class="dv">3</span>]]  <span class="co"># Sepal length and petal width</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1 if Iris-Virginica, else 0</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> (iris[<span class="st">"target"</span>] <span class="op">==</span> <span class="dv">2</span>).astype(<span class="st">'int'</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Build linear svm classifier</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Scaling is important for SVM.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Build a Pipeline that first scales data and then trains the model</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># For hard margin, set C=0.0</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>svm_clf <span class="op">=</span> Pipeline([</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"scaler"</span>, StandardScaler()),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"linear_svc"</span>, LinearSVC(C<span class="op">=</span><span class="fl">1.0</span>, loss<span class="op">=</span><span class="st">"hinge"</span>, dual<span class="op">=</span><span class="st">"auto"</span>, random_state<span class="op">=</span><span class="dv">36</span>)),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>svm_clf.fit(X, y)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'data': array([[5.1, 3.5, 1.4, 0.2],
+       [4.9, 3. , 1.4, 0.2],
+       [4.7, 3.2, 1.3, 0.2],
+       [4.6, 3.1, 1.5, 0.2],
+       [5. , 3.6, 1.4, 0.2],
+       [5.4, 3.9, 1.7, 0.4],
+       [4.6, 3.4, 1.4, 0.3],
+       [5. , 3.4, 1.5, 0.2],
+       [4.4, 2.9, 1.4, 0.2],
+       [4.9, 3.1, 1.5, 0.1],
+       [5.4, 3.7, 1.5, 0.2],
+       [4.8, 3.4, 1.6, 0.2],
+       [4.8, 3. , 1.4, 0.1],
+       [4.3, 3. , 1.1, 0.1],
+       [5.8, 4. , 1.2, 0.2],
+       [5.7, 4.4, 1.5, 0.4],
+       [5.4, 3.9, 1.3, 0.4],
+       [5.1, 3.5, 1.4, 0.3],
+       [5.7, 3.8, 1.7, 0.3],
+       [5.1, 3.8, 1.5, 0.3],
+       [5.4, 3.4, 1.7, 0.2],
+       [5.1, 3.7, 1.5, 0.4],
+       [4.6, 3.6, 1. , 0.2],
+       [5.1, 3.3, 1.7, 0.5],
+       [4.8, 3.4, 1.9, 0.2],
+       [5. , 3. , 1.6, 0.2],
+       [5. , 3.4, 1.6, 0.4],
+       [5.2, 3.5, 1.5, 0.2],
+       [5.2, 3.4, 1.4, 0.2],
+       [4.7, 3.2, 1.6, 0.2],
+       [4.8, 3.1, 1.6, 0.2],
+       [5.4, 3.4, 1.5, 0.4],
+       [5.2, 4.1, 1.5, 0.1],
+       [5.5, 4.2, 1.4, 0.2],
+       [4.9, 3.1, 1.5, 0.2],
+       [5. , 3.2, 1.2, 0.2],
+       [5.5, 3.5, 1.3, 0.2],
+       [4.9, 3.6, 1.4, 0.1],
+       [4.4, 3. , 1.3, 0.2],
+       [5.1, 3.4, 1.5, 0.2],
+       [5. , 3.5, 1.3, 0.3],
+       [4.5, 2.3, 1.3, 0.3],
+       [4.4, 3.2, 1.3, 0.2],
+       [5. , 3.5, 1.6, 0.6],
+       [5.1, 3.8, 1.9, 0.4],
+       [4.8, 3. , 1.4, 0.3],
+       [5.1, 3.8, 1.6, 0.2],
+       [4.6, 3.2, 1.4, 0.2],
+       [5.3, 3.7, 1.5, 0.2],
+       [5. , 3.3, 1.4, 0.2],
+       [7. , 3.2, 4.7, 1.4],
+       [6.4, 3.2, 4.5, 1.5],
+       [6.9, 3.1, 4.9, 1.5],
+       [5.5, 2.3, 4. , 1.3],
+       [6.5, 2.8, 4.6, 1.5],
+       [5.7, 2.8, 4.5, 1.3],
+       [6.3, 3.3, 4.7, 1.6],
+       [4.9, 2.4, 3.3, 1. ],
+       [6.6, 2.9, 4.6, 1.3],
+       [5.2, 2.7, 3.9, 1.4],
+       [5. , 2. , 3.5, 1. ],
+       [5.9, 3. , 4.2, 1.5],
+       [6. , 2.2, 4. , 1. ],
+       [6.1, 2.9, 4.7, 1.4],
+       [5.6, 2.9, 3.6, 1.3],
+       [6.7, 3.1, 4.4, 1.4],
+       [5.6, 3. , 4.5, 1.5],
+       [5.8, 2.7, 4.1, 1. ],
+       [6.2, 2.2, 4.5, 1.5],
+       [5.6, 2.5, 3.9, 1.1],
+       [5.9, 3.2, 4.8, 1.8],
+       [6.1, 2.8, 4. , 1.3],
+       [6.3, 2.5, 4.9, 1.5],
+       [6.1, 2.8, 4.7, 1.2],
+       [6.4, 2.9, 4.3, 1.3],
+       [6.6, 3. , 4.4, 1.4],
+       [6.8, 2.8, 4.8, 1.4],
+       [6.7, 3. , 5. , 1.7],
+       [6. , 2.9, 4.5, 1.5],
+       [5.7, 2.6, 3.5, 1. ],
+       [5.5, 2.4, 3.8, 1.1],
+       [5.5, 2.4, 3.7, 1. ],
+       [5.8, 2.7, 3.9, 1.2],
+       [6. , 2.7, 5.1, 1.6],
+       [5.4, 3. , 4.5, 1.5],
+       [6. , 3.4, 4.5, 1.6],
+       [6.7, 3.1, 4.7, 1.5],
+       [6.3, 2.3, 4.4, 1.3],
+       [5.6, 3. , 4.1, 1.3],
+       [5.5, 2.5, 4. , 1.3],
+       [5.5, 2.6, 4.4, 1.2],
+       [6.1, 3. , 4.6, 1.4],
+       [5.8, 2.6, 4. , 1.2],
+       [5. , 2.3, 3.3, 1. ],
+       [5.6, 2.7, 4.2, 1.3],
+       [5.7, 3. , 4.2, 1.2],
+       [5.7, 2.9, 4.2, 1.3],
+       [6.2, 2.9, 4.3, 1.3],
+       [5.1, 2.5, 3. , 1.1],
+       [5.7, 2.8, 4.1, 1.3],
+       [6.3, 3.3, 6. , 2.5],
+       [5.8, 2.7, 5.1, 1.9],
+       [7.1, 3. , 5.9, 2.1],
+       [6.3, 2.9, 5.6, 1.8],
+       [6.5, 3. , 5.8, 2.2],
+       [7.6, 3. , 6.6, 2.1],
+       [4.9, 2.5, 4.5, 1.7],
+       [7.3, 2.9, 6.3, 1.8],
+       [6.7, 2.5, 5.8, 1.8],
+       [7.2, 3.6, 6.1, 2.5],
+       [6.5, 3.2, 5.1, 2. ],
+       [6.4, 2.7, 5.3, 1.9],
+       [6.8, 3. , 5.5, 2.1],
+       [5.7, 2.5, 5. , 2. ],
+       [5.8, 2.8, 5.1, 2.4],
+       [6.4, 3.2, 5.3, 2.3],
+       [6.5, 3. , 5.5, 1.8],
+       [7.7, 3.8, 6.7, 2.2],
+       [7.7, 2.6, 6.9, 2.3],
+       [6. , 2.2, 5. , 1.5],
+       [6.9, 3.2, 5.7, 2.3],
+       [5.6, 2.8, 4.9, 2. ],
+       [7.7, 2.8, 6.7, 2. ],
+       [6.3, 2.7, 4.9, 1.8],
+       [6.7, 3.3, 5.7, 2.1],
+       [7.2, 3.2, 6. , 1.8],
+       [6.2, 2.8, 4.8, 1.8],
+       [6.1, 3. , 4.9, 1.8],
+       [6.4, 2.8, 5.6, 2.1],
+       [7.2, 3. , 5.8, 1.6],
+       [7.4, 2.8, 6.1, 1.9],
+       [7.9, 3.8, 6.4, 2. ],
+       [6.4, 2.8, 5.6, 2.2],
+       [6.3, 2.8, 5.1, 1.5],
+       [6.1, 2.6, 5.6, 1.4],
+       [7.7, 3. , 6.1, 2.3],
+       [6.3, 3.4, 5.6, 2.4],
+       [6.4, 3.1, 5.5, 1.8],
+       [6. , 3. , 4.8, 1.8],
+       [6.9, 3.1, 5.4, 2.1],
+       [6.7, 3.1, 5.6, 2.4],
+       [6.9, 3.1, 5.1, 2.3],
+       [5.8, 2.7, 5.1, 1.9],
+       [6.8, 3.2, 5.9, 2.3],
+       [6.7, 3.3, 5.7, 2.5],
+       [6.7, 3. , 5.2, 2.3],
+       [6.3, 2.5, 5. , 1.9],
+       [6.5, 3. , 5.2, 2. ],
+       [6.2, 3.4, 5.4, 2.3],
+       [5.9, 3. , 5.1, 1.8]]), 'target': array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]), 'frame': None, 'target_names': array(['setosa', 'versicolor', 'virginica'], dtype='&lt;U10'), 'DESCR': '.. _iris_dataset:\n\nIris plants dataset\n--------------------\n\n**Data Set Characteristics:**\n\n:Number of Instances: 150 (50 in each of three classes)\n:Number of Attributes: 4 numeric, predictive attributes and the class\n:Attribute Information:\n    - sepal length in cm\n    - sepal width in cm\n    - petal length in cm\n    - petal width in cm\n    - class:\n            - Iris-Setosa\n            - Iris-Versicolour\n            - Iris-Virginica\n\n:Summary Statistics:\n\n============== ==== ==== ======= ===== ====================\n                Min  Max   Mean    SD   Class Correlation\n============== ==== ==== ======= ===== ====================\nsepal length:   4.3  7.9   5.84   0.83    0.7826\nsepal width:    2.0  4.4   3.05   0.43   -0.4194\npetal length:   1.0  6.9   3.76   1.76    0.9490  (high!)\npetal width:    0.1  2.5   1.20   0.76    0.9565  (high!)\n============== ==== ==== ======= ===== ====================\n\n:Missing Attribute Values: None\n:Class Distribution: 33.3% for each of 3 classes.\n:Creator: R.A. Fisher\n:Donor: Michael Marshall (MARSHALL%PLU@io.arc.nasa.gov)\n:Date: July, 1988\n\nThe famous Iris database, first used by Sir R.A. Fisher. The dataset is taken\nfrom Fisher\'s paper. Note that it\'s the same as in R, but not as in the UCI\nMachine Learning Repository, which has two wrong data points.\n\nThis is perhaps the best known database to be found in the\npattern recognition literature.  Fisher\'s paper is a classic in the field and\nis referenced frequently to this day.  (See Duda &amp; Hart, for example.)  The\ndata set contains 3 classes of 50 instances each, where each class refers to a\ntype of iris plant.  One class is linearly separable from the other 2; the\nlatter are NOT linearly separable from each other.\n\n|details-start|\n**References**\n|details-split|\n\n- Fisher, R.A. "The use of multiple measurements in taxonomic problems"\n  Annual Eugenics, 7, Part II, 179-188 (1936); also in "Contributions to\n  Mathematical Statistics" (John Wiley, NY, 1950).\n- Duda, R.O., &amp; Hart, P.E. (1973) Pattern Classification and Scene Analysis.\n  (Q327.D83) John Wiley &amp; Sons.  ISBN 0-471-22361-1.  See page 218.\n- Dasarathy, B.V. (1980) "Nosing Around the Neighborhood: A New System\n  Structure and Classification Rule for Recognition in Partially Exposed\n  Environments".  IEEE Transactions on Pattern Analysis and Machine\n  Intelligence, Vol. PAMI-2, No. 1, 67-71.\n- Gates, G.W. (1972) "The Reduced Nearest Neighbor Rule".  IEEE Transactions\n  on Information Theory, May 1972, 431-433.\n- See also: 1988 MLC Proceedings, 54-64.  Cheeseman et al"s AUTOCLASS II\n  conceptual clustering system finds 3 classes in the data.\n- Many, many more ...\n\n|details-end|\n', 'feature_names': ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)'], 'filename': 'iris.csv', 'data_module': 'sklearn.datasets.data'}</code></pre>
+</div>
+</div>
+<div id="58b4e7c7" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> svm_clf[<span class="st">"scaler"</span>].transform(X)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>x_db <span class="op">=</span> [X_scaled[:,<span class="dv">0</span>].<span class="bu">min</span>(), X_scaled[:,<span class="dv">0</span>].<span class="bu">max</span>()]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>beta0 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].intercept_[<span class="dv">0</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>beta1 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].coef_[<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>beta2 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].coef_[<span class="dv">0</span>][<span class="dv">1</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>y_db <span class="op">=</span> <span class="op">-</span>(beta0 <span class="op">+</span> np.dot(beta1, x_db)) <span class="op">/</span> beta2</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_scaled[iris[<span class="st">"target"</span>] <span class="op">==</span> <span class="dv">2</span>, <span class="dv">0</span>], X_scaled[iris[<span class="st">"target"</span>] <span class="op">==</span> <span class="dv">2</span>, <span class="dv">1</span>],</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="st">'^'</span>, c<span class="op">=</span><span class="st">'g'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Irs-Virginica'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_scaled[iris[<span class="st">"target"</span>] <span class="op">!=</span> <span class="dv">2</span>, <span class="dv">0</span>], X_scaled[iris[<span class="st">"target"</span>] <span class="op">!=</span> <span class="dv">2</span>, <span class="dv">1</span>],</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="st">'s'</span>, c<span class="op">=</span><span class="st">'b'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Not Iris-Virginica'</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.plot(x_db, y_db, label<span class="op">=</span><span class="st">'Decision Boundary'</span>, c<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">16</span>, loc<span class="op">=</span><span class="st">'lower right'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sepal length'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Petal width'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-4-output-1.png" width="608" height="437" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="a914e3a2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use petal length and width as features</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris[<span class="st">"data"</span>][:, <span class="dv">2</span>:]  <span class="co"># petal length and width</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>svm_clf.fit(X, y)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> svm_clf[<span class="st">"scaler"</span>].transform(X)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>x_db <span class="op">=</span> [X_scaled[:,<span class="dv">0</span>].<span class="bu">min</span>(), X_scaled[:,<span class="dv">0</span>].<span class="bu">max</span>()]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>beta0 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].intercept_[<span class="dv">0</span>]</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>beta1 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].coef_[<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>beta2 <span class="op">=</span> svm_clf[<span class="st">"linear_svc"</span>].coef_[<span class="dv">0</span>][<span class="dv">1</span>]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>y_db <span class="op">=</span> <span class="op">-</span>(beta0 <span class="op">+</span> np.dot(beta1, x_db)) <span class="op">/</span> beta2</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_scaled[iris[<span class="st">"target"</span>] <span class="op">==</span> <span class="dv">2</span>, <span class="dv">0</span>], X_scaled[iris[<span class="st">"target"</span>] <span class="op">==</span> <span class="dv">2</span>, <span class="dv">1</span>],</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="st">'^'</span>, c<span class="op">=</span><span class="st">'g'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Irs-Virginica'</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.scatter(X_scaled[iris[<span class="st">"target"</span>] <span class="op">!=</span> <span class="dv">2</span>, <span class="dv">0</span>], X_scaled[iris[<span class="st">"target"</span>] <span class="op">!=</span> <span class="dv">2</span>, <span class="dv">1</span>],</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="st">'s'</span>, c<span class="op">=</span><span class="st">'b'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Not Iris-Virginica'</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.plot(x_db, y_db, label<span class="op">=</span><span class="st">'Decision Boundary'</span>, c<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">16</span>, loc<span class="op">=</span><span class="st">'lower right'</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Petal length'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Petal width'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-5-output-1.png" width="608" height="437" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Example 5-2</strong></p>
+<p>Consider isotropic Gaussian blobs for binary classification (use sklearn.datasets.make_blobs). Use a sigmoid kernel with <span class="math inline">\(\gamma\)</span> set to “scale” to train a SVM.</p>
+<div id="511d352a" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate two isotropic Gaussian blobs with two features, each blob has 200 data points</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> datasets.make_blobs(n_samples<span class="op">=</span><span class="dv">200</span>, n_features<span class="op">=</span><span class="dv">2</span>, centers<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'o'</span>, c<span class="op">=</span>y, s<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$x_1$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'$x_2$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Two isotropic Gaussian blobs'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-6-output-1.png" width="595" height="457" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="21bad6e4" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train SVM with a sigmoid kernel</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>svm_classifier <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'sigmoid'</span>, gamma<span class="op">=</span><span class="st">'scale'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>svm_classifier.fit(X, y)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># generage grid</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(X[:,<span class="dv">0</span>].<span class="bu">min</span>(), X[:,<span class="dv">0</span>].<span class="bu">max</span>(), <span class="dv">400</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> np.linspace(X[:,<span class="dv">1</span>].<span class="bu">min</span>(), X[:,<span class="dv">1</span>].<span class="bu">max</span>(), <span class="dv">400</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>X1, X2 <span class="op">=</span> np.meshgrid(x1, x2)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># flatten X1 and X2</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>r1, r2 <span class="op">=</span> X1.flatten(), X2.flatten()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># make r1 and r2 2D</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>r1, r2 <span class="op">=</span> r1.reshape((<span class="bu">len</span>(r1), <span class="dv">1</span>)), r2.reshape((<span class="bu">len</span>(r2), <span class="dv">1</span>))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># horizontally stack r1 and r2</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>grid <span class="op">=</span> np.hstack((r1,r2))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># now grid is a feature matrix</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># get predicted labels for grid</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>yhat <span class="op">=</span> svm_classifier.predict(grid)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># reshape yhat so that it has the same shape as X1 and X2</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>ZZ <span class="op">=</span> yhat.reshape(X1.shape)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>plt.contourf(X1, X2, ZZ, cmap<span class="op">=</span><span class="st">'Paired'</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y <span class="op">==</span> <span class="dv">0</span>, <span class="dv">0</span>], X[y <span class="op">==</span> <span class="dv">0</span>, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'o'</span>, c<span class="op">=</span><span class="st">'b'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Label 0'</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y <span class="op">==</span> <span class="dv">1</span>, <span class="dv">0</span>], X[y <span class="op">==</span> <span class="dv">1</span>, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'s'</span>, c<span class="op">=</span><span class="st">'g'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Label 1'</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$X_1$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'$X_2$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-7-output-1.png" width="595" height="437" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Example 5-3</strong></p>
+<p>Train an SVM for two circles (sklearn.datasets.make_circles) using a Gaussin rbf kernel with <span class="math inline">\(\gamma=0.7\)</span>.</p>
+<div id="fba381e9" class="cell" data-ein.hycell="false" data-ein.tags="worksheet-0" data-slideshow="{&quot;slide_type&quot;:&quot;-&quot;}" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two circles with a total number of 200 points, </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a scale factor of 0.3 between inner and outer circle in the range [0, 1)</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># and a standard deviation of 0.1 of Gaussian noise added to the data.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> datasets.make_circles(n_samples<span class="op">=</span><span class="dv">100</span>, factor<span class="op">=</span><span class="fl">0.3</span>, noise<span class="op">=</span><span class="fl">0.1</span>, random_state<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'o'</span>, c<span class="op">=</span>y, s<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$x_1$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'$x_2$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Two circles'</span>)<span class="op">;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Train SVM with a sigmoid kernel</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>svm_classifier <span class="op">=</span> SVC(kernel<span class="op">=</span><span class="st">'rbf'</span>, gamma<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>svm_classifier.fit(X, y)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-8-output-1.png" width="608" height="457" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="b651a66a" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># generage grid</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(X[:,<span class="dv">0</span>].<span class="bu">min</span>(), X[:,<span class="dv">0</span>].<span class="bu">max</span>(), <span class="dv">400</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> np.linspace(X[:,<span class="dv">1</span>].<span class="bu">min</span>(), X[:,<span class="dv">1</span>].<span class="bu">max</span>(), <span class="dv">400</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>X1, X2 <span class="op">=</span> np.meshgrid(x1, x2)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># flatten X1 and X2</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>r1, r2 <span class="op">=</span> X1.flatten(), X2.flatten()</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># make r1 and r2 2D</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>r1, r2 <span class="op">=</span> r1.reshape((<span class="bu">len</span>(r1), <span class="dv">1</span>)), r2.reshape((<span class="bu">len</span>(r2), <span class="dv">1</span>))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># horizontally stack r1 and r2</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>grid <span class="op">=</span> np.hstack((r1,r2))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># now grid is a feature matrix</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># get predicted labels for grid</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>yhat <span class="op">=</span> svm_classifier.predict(grid)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># reshape yhat so that it has the same shape as X1 and X2</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>ZZ <span class="op">=</span> yhat.reshape(X1.shape)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>plt.contourf(X1, X2, ZZ, cmap<span class="op">=</span><span class="st">'Paired'</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y <span class="op">==</span> <span class="dv">0</span>, <span class="dv">0</span>], X[y <span class="op">==</span> <span class="dv">0</span>, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'o'</span>, c<span class="op">=</span><span class="st">'b'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Label 0'</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[y <span class="op">==</span> <span class="dv">1</span>, <span class="dv">0</span>], X[y <span class="op">==</span> <span class="dv">1</span>, <span class="dv">1</span>], marker<span class="op">=</span><span class="st">'s'</span>, c<span class="op">=</span><span class="st">'g'</span>, s<span class="op">=</span><span class="dv">24</span>, label<span class="op">=</span><span class="st">'Label 1'</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>plt.legend(fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$X_1$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'$X_2$'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-9-output-1.png" width="617" height="437" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="svm-regression" class="level3">
+<h3 class="anchored" data-anchor-id="svm-regression">SVM Regression</h3>
+<p>The SVM algorithm can handle both linear and nonlinear classification, as well as linear and nonlinear regression. In SVM for regression, the aim is to fit as many data points as possible within a margin, while minimizing the number of data points that fall outside the margin (see figure below; the points located outside of the margin are colored differently). The width of this margin boundary is controlled by a hyperparameter <span class="math inline">\(\epsilon\)</span>. The following figure illustrates a linear SVM Regression model with a hyperparameter <span class="math inline">\(\epsilon\)</span>. The idea is that we can tolerate a deviation that is less than <span class="math inline">\(\epsilon\)</span> for a prediction <span class="math inline">\(f(\boldsymbol{x})-y\)</span>, where <span class="math inline">\(f(\boldsymbol{x})\)</span> is the SVM regression prediction, and <span class="math inline">\(y\)</span> is the target corresponding to feature <span class="math inline">\(\boldsymbol{x}\)</span>. There will be a penalty when the deviation is greater than <span class="math inline">\(\epsilon\)</span>. The SVR regression problem can thus be described mathematically as:</p>
+<p><span class="math display">\[\begin{equation*}
+\min_{\boldsymbol{w},b}\frac{1}{2}\|\boldsymbol{w}\|^2 + C\sum_{i=1}^NL_{\epsilon}(f(\boldsymbol{x}_i)-y_i)
+\end{equation*}\]</span></p>
+<p>where <span class="math inline">\(L_{\epsilon}\)</span> is the <span class="math inline">\(\epsilon\)</span>-insensitive loss function defined as:</p>
+<p><span class="math display">\[\begin{equation*}
+L_{\epsilon}(x) =
+\begin{cases}
+0, &amp; \text{if } |x|\le \epsilon \\
+|x|-\epsilon, &amp; \text{otherwise}
+\end{cases}
+\end{equation*}\]</span></p>
+<p><img src="image/svr.png" width="500" height="500"></p>
+<p>Scikit-Learn’s LinearSVR class can perform linear SVM Regression, and SVR can perform kernelized SVM model for nonlinear regression tasks.</p>
+<p><strong>Example 5-4</strong></p>
+<p>Consider the function <span class="math inline">\(y=f(x)=\sin(x)\)</span>. Create a dataset of <span class="math inline">\(50\)</span> instances with <span class="math inline">\(x\in (0,5)\)</span> and Build SVM regression models based on the data using three kernels: linear, rbf and polynomial of degree 3.</p>
+<div id="044a2bdf" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVR</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ndata <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the training dataset</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">20</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.sort(<span class="dv">5</span> <span class="op">*</span> np.random.rand(ndata))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.sin(X)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X[:, np.newaxis]</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit SVR models</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>svr_rbf <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'rbf'</span>, C<span class="op">=</span><span class="dv">100</span>, gamma<span class="op">=</span><span class="fl">0.1</span>, epsilon<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>svr_lin <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'linear'</span>, C<span class="op">=</span><span class="dv">100</span>, epsilon<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>svr_poly <span class="op">=</span> SVR(kernel<span class="op">=</span><span class="st">'poly'</span>, C<span class="op">=</span><span class="dv">100</span>, degree<span class="op">=</span><span class="dv">3</span>, epsilon<span class="op">=</span><span class="fl">0.1</span>, coef0<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the SVR models</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>y_rbf <span class="op">=</span> svr_rbf.fit(X, y).predict(X)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>y_lin <span class="op">=</span> svr_lin.fit(X, y).predict(X)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>y_poly <span class="op">=</span> svr_poly.fit(X, y).predict(X)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the original data with the three models</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>plt.scatter(X, y, color<span class="op">=</span><span class="st">'darkorange'</span>, label<span class="op">=</span><span class="st">'Data'</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>plt.plot(X, y_rbf, color<span class="op">=</span><span class="st">'navy'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'RBF model'</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>plt.plot(X, y_lin, color<span class="op">=</span><span class="st">'c'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Linear model'</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>plt.plot(X, y_poly, color<span class="op">=</span><span class="st">'cornflowerblue'</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="st">'Polynomial model'</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'X'</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'y'</span>)</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Support Vector Regression for $y=\sin(x)$'</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>plt.legend()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter5_SupportVectorMachine_files/figure-html/cell-10-output-1.png" width="823" height="524" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li><p>Cortes, C. and Vapnik, V.N., Support vector networks. <em>Machine Learning</em>, 20(3): 273-297.</p></li>
+<li><p>Platt, J.C., Sequential Minimal Optimization: A fast algorithm for training support vector machines. Technical Report MSR-TR-98-14, Microsoft Research, 1998.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
