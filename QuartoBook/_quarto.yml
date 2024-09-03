@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: docs
+
+book:
+  title: "Machine Learning Methods"
+  author: "Yaning Liu"
+  date: "8/01/2024"
+  chapters:
+    - index.qmd
+    - Chapter5_SupportVectorMachine.qmd
+    - Chapter6_DecisionTrees.qmd
+    - Chapter7_EnsembleLearning.qmd
+    - Chapter8_DimensionReduction.qmd
+    - Chapter10_NeuralNetworks.qmd
+
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+  epub:
+    cover-image: machine_learning.png

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.47">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Neural Networks – Machine Learning Methods</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./Chapter8_DimensionReduction.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Chapter10_NeuralNetworks.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Machine Learning Methods</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter5_SupportVectorMachine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter6_DecisionTrees.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter7_EnsembleLearning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter8_DimensionReduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter10_NeuralNetworks.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-perceptron" id="toc-the-perceptron" class="nav-link active" data-scroll-target="#the-perceptron"><span class="header-section-number">5.1</span> The Perceptron</a></li>
+  <li><a href="#multilayer-perceptron-mlp" id="toc-multilayer-perceptron-mlp" class="nav-link" data-scroll-target="#multilayer-perceptron-mlp"><span class="header-section-number">5.2</span> Multilayer Perceptron (MLP)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A neural network (NN) is a machine learning model that mimics the way biological neural networks in the human brain process information. These networks have various degrees of complexity, and are able to handle difficult problems, such as natural language processing and image recognition. A prototype of NN is shown in the following figure,</p>
+<p><img src="image/neural_networks.png" width="400"></p>
+<p>The circles are called <strong>neurons</strong> (also called nodes), which are the basic units of the NN. They are arranged in layers and here there are three layers: the <em>input layer</em>: features are passed into this layer; the output layer: the predicted quantities (discrete or continuous) come from this layer; and the hidden layer: any layers between the input and output layers, main computations are performed in these layers. Each neuron in the hidden layer in this structure is <em>fully connected</em> (or <em>dense</em>) with the input neurons (i.e., connected with all the neurons in the previous layer). The arrows represent the connections, and a weight is associates with each connection. The value of each neuron in the hidden layer is a nonlinear function (called <strong>activation function</strong>) of the weighted sum (with a constant term called <strong>bias</strong>) of the values of the input neurons. The output layer follows a similar pattern. Some commonly ued activation functions are:</p>
+<ul>
+<li><p>Sigmoid: <span class="math inline">\(\sigma(x) = \frac{1}{1+e^{-x}}\)</span></p></li>
+<li><p>Rectified Linear Unit (ReLU): <span class="math inline">\(\text{ReLU}(x) = \max(0,x)\)</span></p></li>
+<li><p>hyperbolic tangent (Tanh): <span class="math inline">\(\text{tanh}(x) = \frac{e^x-e^{-x}}{e^x+e^{-x}}\)</span></p></li>
+</ul>
+<p>Depending on the structure of the NN, it can be as simple as a linear model, or can have millions or more hyperparameters that take days to be trained. We start from the simplest versions of NN and gradually move to more complex ones in later chapters.</p>
+<section id="the-perceptron" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="the-perceptron"><span class="header-section-number">5.1</span> The Perceptron</h2>
+<p>A perceptron has only an input layer and an output layer. As the figure shown below, we consider a perceptron with only one neuron in the output layer. The output neuron takes the weighted sum of the inputs (<span class="math inline">\(w_1x_1+\cdots+w_mx_m+b\)</span>), and applies an activation function <span class="math inline">\(\Gamma\)</span>, usually the <em>Heaviside step function</em>, to the weighted sum to generate an output <span class="math inline">\(y\)</span>:</p>
+<p><span class="math display">\[\begin{equation*}
+y = \Gamma(w_1x_1+\cdots+w_mx_m+b)
+\end{equation*}\]</span></p>
+<p>where</p>
+<p><span class="math display">\[\begin{equation*}
+\Gamma(x) =
+\begin{cases}
+1 &amp; \text{if } x\ge 1 \\
+0 &amp; \text{if } x\lt 1
+\end{cases}
+\end{equation*}\]</span></p>
+<p><img src="image/perceptron.png" width="600"></p>
+<p>If the activation function <span class="math inline">\(\Gamma\)</span> is taken to be the identity (linear activation) function <span class="math inline">\(\Gamma(x)=x\)</span>, then perceptron is reduced to a linear model. Perceptron is mainly used for binary classification. Training a perceptron model involves finding the optimal weights and biases. The choice of the activation function also matters. The We now use an example to illustrate how to implement perceptron in Python.</p>
+<p><strong>Example 10-1</strong></p>
+<p>Use perceptron for a random 2-class classification problem where the data are generated by sklearn.datasets.make_classification.</p>
+<div id="b5eba4bd" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Perceptron</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_classification</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a synthetic dataset</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_classification(n_samples<span class="op">=</span><span class="dv">200</span>, n_features<span class="op">=</span><span class="dv">2</span>, n_informative<span class="op">=</span><span class="dv">2</span>, n_redundant<span class="op">=</span><span class="dv">0</span>, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                           n_clusters_per_class<span class="op">=</span><span class="dv">1</span>, n_classes<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the perceptron model</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>per_clf <span class="op">=</span> Perceptron(max_iter<span class="op">=</span><span class="dv">1000</span>, tol<span class="op">=</span><span class="fl">1e-3</span>, random_state<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>per_clf.fit(X, y)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> per_clf.predict(X)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f3db7d6e" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mesh grid for plotting the decision boundary</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x_min, x_max <span class="op">=</span> X[:, <span class="dv">0</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">0</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>y_min, y_max <span class="op">=</span> X[:, <span class="dv">1</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">1</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.linspace(x_min, x_max, <span class="dv">200</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                     np.linspace(y_min, y_max, <span class="dv">200</span>))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict over the mesh grid</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> per_clf.predict(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the decision boundary</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>plt.contourf(xx, yy, Z)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the original data points</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], c<span class="op">=</span>y, edgecolors<span class="op">=</span><span class="st">'k'</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Add labels and title</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'$x_1$'</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'$x_2$'</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Perceptron Decision Boundary'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter10_NeuralNetworks_files/figure-html/cell-3-output-1.png" width="587" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="multilayer-perceptron-mlp" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="multilayer-perceptron-mlp"><span class="header-section-number">5.2</span> Multilayer Perceptron (MLP)</h2>
+<p>If we add one or more hidden layers to the perceptron structure, we obtain a <strong>multilayer perceptron</strong> (see the first figure above). With a more complex structure, MLP is capable of solving more difficult problems for both classification and regression. When the number of hidden layers is large, the model is called a <strong>deep neural network (DNN)</strong>. Using DNNs to perform machine learning tasks is called <strong>deep learning</strong> (although there is no agreement on how many hidden layers is deep). The input layer takes the input features, each node of each hidden layer takes the weighted sum of the nodes from the previous layer and applies an activation function, and the output layer produces the output. There can be a single node in the output layer if the problem is a regression of binary classification. There can be more nodes for multi-class classification problems. For a multi-class classification problem, the activation function for the output layer is usually the <strong>softa</strong> function for a <span class="math inline">\(K\)</span>-class classification problem is:</p>
+<p><span class="math display">\[\begin{align*}
+\Gamma(\boldsymbol{x}) = \Gamma(x_1, x_2, \dots, x_K) = \left(\frac{e^{x_1}}{\sum_{j=1}^K e^{x_j}}, \frac{e^{x_2}}{\sum_{j=1}^K e^{x_j}}, \dots, \frac{e^{x_K}}{\sum_{j=1}^K e^{x_j}}\right) \in (0, 1)^K
+\end{align*}\]</span></p>
+<p>The training of an MLP involves finding the optimal weights and biases based on a selected loss function. The MSE function is natural for regression, and cross-entropy is appropriate for classification. To find the best hyperparameters, initial values (guesses) of the hyperparameters need to be first provided. Then the input layer receives the input features, and each node in the hidden layer closest to the input layer receives the weighted sum of the input nodes and applies the activation function. The subsequent hidden layers and the output layer follow the same process, and finally an output is produced corresponding to the initial hyperparameter values, and the loss function is evaluated at the output. This stage is called <strong>forward propagation</strong>. The second stage involves a process that reverses the previous one, called <strong>back propagation</strong>. Here, the gradient of the loss function with respect to the hyperparameters (weights and biases) are computed. With the gradient information, an efficient optimization algorithm such as <em>stochastic gradient descent (SGD)</em> can be used to search for the optimal hyperparameters. The core of the training of MLP is the back propagation. We use examples to illustrate how it works.</p>
+<p><strong>Example 10-2</strong></p>
+<p>In the simple MLP for regression below, we have initialized all the weights and biases, and the input values for Nodes <span class="math inline">\(I_1\)</span> and <span class="math inline">\(I_2\)</span> are given. For both the hidden and output layers, suppose we use the sigmoid activation. Also assume the true target values are <span class="math inline">\(0.01\)</span> and <span class="math inline">\(0.99\)</span> for Nodes <span class="math inline">\(O_1\)</span> and <span class="math inline">\(O_2\)</span>, respectively. Perform a forward pass and evaluate the value of the cost function.</p>
+<p><img src="image/backpropagation.png" width="800"></p>
+<p>Calculate the weighted sum of the inputs <span class="math inline">\(I_1\)</span> and <span class="math inline">\(I_2\)</span> for <span class="math inline">\(H_1\)</span>, called the <strong>net input</strong> of <span class="math inline">\(H_1\)</span>:</p>
+<p><span class="math display">\[\begin{align*}
+\text{net}_{H_1} &amp;= w_{1} \cdot i_{1}+w_{2} \cdot i_{2}+b_{1} \\
+\text{net}_{H_1} &amp;= 0.15 \cdot 0.05+0.2 \cdot 0.1+0.35=0.3775 \\
+\end{align*}\]</span></p>
+<p>Use the sigmoid function to get the output of <span class="math inline">\(H_1\)</span>:</p>
+<p><span class="math display">\[\begin{equation*}
+\text {out}_{H_1}=\frac{1}{1+e^{-\text{net}_{H_1}}}=\frac{1}{1+e^{-0.3775}}=0.593269992
+\end{equation*}\]</span></p>
+<p>Carrying out the same process for <span class="math inline">\(H_2\)</span>:</p>
+<p><span class="math display">\[\begin{equation*}
+\text{out}_{H_2}=0.596884378
+\end{equation*}\]</span></p>
+<p>Repeat this process for the nodes in the output layer, using the output from the hidden layer nodes as inputs.</p>
+<p>For the output of <span class="math inline">\(O_1\)</span>, we have:</p>
+<p><span class="math display">\[\begin{align*}
+\text{net}_{O_1}&amp;=w_{5} \cdot \text{out}_{H_1}+w_{6} \cdot \text {out}_{H_2}+b_{3} \\
+\text{net}_{O_1}&amp;=0.4 \cdot 0.593269992+0.45 \cdot 0.596884378+0.6=1.105905967 \\
+\text{out}_{O_1}&amp;=\frac{1}{1+e^{-\text{net}_{O_1}}}=\frac{1}{1+e^{-1.105905967}}=0.75136507
+\end{align*}\]</span></p>
+<p>Similarly, for <span class="math inline">\(O_2\)</span> we get:</p>
+<p><span class="math display">\[\begin{equation*}
+\text{out}_{O_2}=0.772928465
+\end{equation*}\]</span></p>
+<p>We can now calculate the error for each output node using the MSE function and sum them to get the total error:</p>
+<p><span class="math display">\[\begin{equation*}
+E_{\text{total}}=\sum \frac{1}{2}(\text{target}-\text{output})^{2} = \frac{1}{2}(0.01-0.75136507)^{2} + \frac{1}{2}(0.99-0.772928465)^{2} = 0.298371109
+\end{equation*}\]</span></p>
+<p><strong>Example 10-3</strong></p>
+<p>Now we perform the back propagation process.</p>
+<p>Output layer: Consider <span class="math inline">\(w_5\)</span>. We want to know how much a change in <span class="math inline">\(w_5\)</span> affects the total error, i.e., <span class="math inline">\(\frac{\partial \text{E}_{\text{total}} }{\partial w_5}\)</span>. Applying the chain rule, we know that</p>
+<p><span class="math display">\[\begin{equation*}
+\frac{\partial E_{\text{total}}}{\partial w_{5}}=\frac{\partial E_{\text{total}}}{\partial \text{out}_{O_1}} \cdot \frac{\partial \text{out}_{O_1}}{\partial \text{net}_{O_1}} \cdot \frac{\partial \text{out}_{O_1}}{\partial w_{5}}
+\end{equation*}\]</span></p>
+<p>We now find each piece in this equation:</p>
+<p><span class="math display">\[\begin{align*}
+E_{\text{total}}&amp;=\frac{1}{2}\left(\text{target}_{o 1}-\text { out }_{o 1}\right)^{2}+\frac{1}{2}\left(\operatorname{target}_{o 2}-\text { out }_{o 2}\right)^{2} \\
+\frac{\partial E_{\text{total}}}{\partial \text{out}_{O_1}}&amp;=-\left(\text{target}_{O_1}-\text{out}_{O_1}\right)=-(0.01-0.75136507)=0.74136507
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{array}{l}
+\text { out }_{o 1}=\frac{1}{1+e^{-n e t_{o 1}}} \\
+\frac{\partial \text { out }_{o 1}}{\partial n e t_{o 1}}=\operatorname{out}_{o 1}\left(1-\text { out }_{o 1}\right)=0.75136507(1-0.75136507)=0.186815602
+\end{array}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{array}{l}
+\text { net }_{o 1}=w_{5} \cdot \text { out }_{h 1}+w_{6} \cdot \text { out }_{h 2}+b_{3} \\
+\frac{\partial\text {net}_{O_1} }{\partial w_{5}}=\text { out }_{h 1}=0.593269992
+\end{array}
+\end{equation*}\]</span></p>
+<p>Putting it all together:</p>
+<p><span class="math display">\[\begin{align*}
+\frac{\partial E_{\text{total}}}{\partial w_{5}}&amp;=\frac{\partial E_{\text{total}}}{\partial \text{out}_{O_1}} \cdot \frac{\partial \text{out}_{O_1}}{\partial \text{net}_{O_1}} \cdot \frac{\partial\text{net}_{O_1}}{\partial w_{5}} \\
+\frac{\partial E_{\text{total}}}{\partial w_{5}}&amp;=0.74136507 \cdot 0.186815602 \cdot 0.593269992=0.082167041
+\end{align*}\]</span></p>
+<p>Similarly, we can obtain <span class="math inline">\(\frac{\partial \text{E}_{\text{total}} }{\partial w_6}\)</span>, <span class="math inline">\(\frac{\partial \text{E}_{\text{total}} }{\partial w_7}\)</span>, <span class="math inline">\(\frac{\partial \text{E}_{\text{total}} }{\partial w_8}\)</span>.</p>
+<p>Now we deal with the hidden layer. First we find <span class="math inline">\(\frac{\partial \text{E}_{\text{total}} }{\partial w_1}\)</span> by</p>
+<p><span class="math display">\[\begin{equation*}
+\frac{\partial E_{\text{total}}}{\partial w_{1}}=\frac{\partial E_{\text{total}}}{\partial \text{out}_{H_1}} \cdot \frac{\partial \text{out}_{H_1}}{\partial \text{net}_{H_1}} \cdot \frac{\partial \text{net}_{H_1}}{\partial w_{1}}
+\end{equation*}\]</span></p>
+<p>Note <span class="math inline">\(\text{out}_{H_1}\)</span> affects both <span class="math inline">\(\text{out}_{O_1}\)</span> and <span class="math inline">\(\text{out}_{O_2}\)</span>. So</p>
+<p><span class="math display">\[\begin{equation*}
+\frac{\partial E_{\text{total}}}{\partial \text{out}_{H_1}}=\frac{\partial E_{O_1}}{\partial \text{out}_{H_1}}+\frac{\partial E_{O_2}}{\partial \text{out}_{H_1}}
+\end{equation*}\]</span> and</p>
+<p><span class="math display">\[\begin{equation*}
+\frac{\partial E_{O_1}}{\partial \text {out}_{H_1}}=\frac{\partial E_{O_1}}{\partial \text{net}_{O_1}} \cdot \frac{\partial \text{net}_{O_1}}{\partial \text{out}_{H_1}} = \frac{\partial E_{O_1}}{\partial \text{out}_{O_1}} \cdot \frac{\partial \text {out}_{O_1}}{\partial \text{net}_{O_1}}\cdot \frac{\partial \text{net}_{O_1}}{\partial \text{out}_{H_1}} = 0.74136507\cdot 0.186815602 \cdot w_5 = 0.055399425
+\end{equation*}\]</span></p>
+<p>Similarly, all the other quantities can be obtained. Once all the partial derivatives are obtained, SGD or other derivative-based optimization algorithm can be applied.</p>
+<p><strong>Example 10-4</strong></p>
+<p>We perform MLP for the iris data set. Here we use two hidden layers, each with <span class="math inline">\(10\)</span> neurons.</p>
+<div id="96511204" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPClassifier</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Iris dataset</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> load_iris()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> iris.data</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> iris.target</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the dataset into training and testing sets</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">96</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the features</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> scaler.fit_transform(X_train)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> scaler.transform(X_test)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the MLPClassifier</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>mlp <span class="op">=</span> MLPClassifier(hidden_layer_sizes<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>), max_iter<span class="op">=</span><span class="dv">5000</span>, random_state<span class="op">=</span><span class="dv">86</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>mlp.fit(X_train, y_train)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> mlp.predict(X_test)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Confusion Matrix:</span><span class="ch">\n</span><span class="st">"</span>, confusion_matrix(y_test, y_pred))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the loss curve. The loss function continues to drop as the model is being trained</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>plt.plot(mlp.loss_curve_)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'MLP Training Loss Curve'</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Iterations'</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Loss'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix:
+ [[20  0  0]
+ [ 0 14  0]
+ [ 0  0 11]]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter10_NeuralNetworks_files/figure-html/cell-4-output-2.png" width="600" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can check the optimal weights and biases of the model by:</p>
+<div id="a2448b9b" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># See the weight matrix</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mlp.coefs_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>[array([[-0.38639999, -0.47921984, -0.85369411, -0.09692643, -0.10745231,
+          0.6204933 , -0.21007314, -0.42818818,  0.96059093, -0.33130668,
+         -0.53353584,  0.34266489],
+        [ 0.46759207,  0.43518618,  0.67255324, -0.64774433, -0.4716051 ,
+         -0.47048044, -0.29232437,  0.65049607, -0.56107454,  0.57628054,
+          0.43831958,  0.02490162],
+        [-0.28121689, -0.19595681, -0.89872946,  1.24731719,  0.53192312,
+         -1.76467841,  0.77030492, -0.27495727, -0.99168277, -0.79445805,
+         -0.38833726, -0.01354722],
+        [ 0.33654925,  0.20413659, -0.0604337 ,  0.53313068,  0.5098916 ,
+         -0.95091831,  1.26242908, -0.5976721 ,  0.17004848, -0.59130148,
+         -0.80525132,  0.21632437]]),
+ array([[-5.22115239e-01, -1.01460772e-05,  6.63854561e-01,
+         -5.58638660e-01, -1.17290631e-01, -2.67314255e-01],
+        [-1.70766217e-01,  3.03615582e-06,  5.79073512e-01,
+         -4.28465918e-02,  4.48677979e-01, -3.98988864e-01],
+        [ 3.98023541e-01, -9.84730334e-07, -2.61874469e-01,
+         -2.00233714e-10,  8.13262572e-01, -2.68644639e-01],
+        [-3.08437189e-01, -3.39837556e-33, -1.15359523e+00,
+         -1.46528864e-01, -7.39587434e-01, -2.04793275e-04],
+        [-3.20656875e-02,  1.11437745e-20,  2.43235781e-01,
+         -1.88461832e-01, -1.36292845e+00, -1.62083433e-01],
+        [-6.06505850e-02, -5.57667625e-43,  1.92121725e+00,
+         -2.66795860e-01,  1.63185967e+00, -1.06931924e-02],
+        [ 4.66871444e-01, -2.90609369e-05, -1.57047082e+00,
+         -4.92826853e-01,  2.43951395e-01, -2.49797927e-04],
+        [-5.74238448e-05, -9.99580221e-05,  6.19060496e-01,
+          1.63528938e-01,  1.15051811e+00,  1.15172677e-01],
+        [-4.01003452e-01,  2.67118236e-13,  1.79810058e+00,
+          9.06125332e-02, -3.17692857e-01,  1.49533069e-06],
+        [-1.90776811e-16,  2.82001457e-16,  6.60208208e-01,
+         -1.05162652e-10,  1.11280488e+00,  7.64862740e-02],
+        [-3.90733121e-01, -4.16138798e-04,  6.93691343e-01,
+          1.39816374e-39,  5.97359729e-01,  3.77181784e-01],
+        [-5.27576431e-01, -4.57465937e-26, -1.34915774e-01,
+          4.11310602e-01, -6.20370127e-02,  1.09531065e-01]]),
+ array([[ 6.57551335e-01,  6.76243565e-02, -5.44790501e-01],
+        [ 3.26215186e-07, -4.76841489e-04,  3.17413031e-05],
+        [ 1.74927927e-01,  1.01649310e+00, -1.90269507e+00],
+        [ 4.04607609e-01, -3.64797025e-01, -4.56734652e-01],
+        [ 7.86811483e-01, -4.27109606e-01,  1.51893780e-02],
+        [ 6.52852896e-02,  6.91145457e-01,  6.19429767e-01]])]</code></pre>
+</div>
+</div>
+<p>The first weight matrix is <span class="math inline">\(4\times 12\)</span>, since we have four input neurons and <span class="math inline">\(12\)</span> neurons in the first hidden layer. For example, the first row represents the weight from the first neuron of the input layer to all <span class="math inline">\(12\)</span> neurons in the first hidden layer. For the biases, simply call:</p>
+<div id="c25da282" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mlp.intercepts_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>[array([ 1.064518  ,  1.00025039, -0.1233446 , -0.28436637,  1.38207967,
+         0.95564239, -0.32248468,  0.68590364,  0.24189182,  0.01015541,
+         0.90629805,  0.16900112]),
+ array([ 0.30398812, -0.26807586,  0.58656479, -0.24204741, -0.25822549,
+        -0.56513263]),
+ array([-1.71106822, -0.53736298,  1.27126756])]</code></pre>
+</div>
+</div>
+<p>For example, the first array of <span class="math inline">\(12\)</span> elements represents the bias for the <span class="math inline">\(12\)</span> neurons in the first hidden layer.</p>
+<p><strong>Example 10-5</strong></p>
+<p>Apply MLP to the california housing dataset. Use two hidden layers each with <span class="math inline">\(50\)</span> neurons.</p>
+<div id="9802df8a" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_california_housing</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neural_network <span class="im">import</span> MLPRegressor</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, r2_score</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Boston Housing dataset</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> fetch_california_housing()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data.data</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data.target</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the dataset into training and testing sets</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">22</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the features</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> scaler.fit_transform(X_train)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> scaler.transform(X_test)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and train the MLPRegressor</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>mlp <span class="op">=</span> MLPRegressor(hidden_layer_sizes<span class="op">=</span>(<span class="dv">50</span>, <span class="dv">50</span>), max_iter<span class="op">=</span><span class="dv">1000</span>, random_state<span class="op">=</span><span class="dv">77</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>mlp.fit(X_train, y_train)</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> mlp.predict(X_test)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> mean_squared_error(y_test, y_pred)</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> r2_score(y_test, y_pred)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean Squared Error: </span><span class="sc">{</span>mse<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"R^2 Score: </span><span class="sc">{</span>r2<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the predictions vs actual values</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>plt.scatter(y_test, y_pred)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="bu">min</span>(y_test), <span class="bu">max</span>(y_test)], [<span class="bu">min</span>(y_test), <span class="bu">max</span>(y_test)], <span class="st">'r--'</span>)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Actual Prices'</span>)</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted Prices'</span>)</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'MLP Regression: Actual vs Predicted Prices'</span>)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the loss curve</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>plt.plot(mlp.loss_curve_)</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'MLP Training Loss Curve'</span>)</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Iterations'</span>)</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Loss'</span>)</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mean Squared Error: 0.26
+R^2 Score: 0.80</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter10_NeuralNetworks_files/figure-html/cell-7-output-2.png" width="576" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter10_NeuralNetworks_files/figure-html/cell-7-output-3.png" width="589" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Chapter8_DimensionReduction.html" class="pagination-link" aria-label="Dimension Reduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,525 @@
+---
+title: Ensemble Learning
+jupyter: python3
+---
+
+
+
+Ensemble learning is a machine learning technique that combines multiple models (classifiers or regressors, often called **weak learners**) to produce a more accurate and robust one than any individual model. The key idea behind ensemble learning is that by aggregating the predictions from several models, the strengths of individual models can be leveraged, and their weaknesses can be mitigated, thus improving the overall performance of modeling.
+
+## Bagging (Bootstrap Aggregating)
+
+The idea of **bagging**, short for **Bootstrap Aggregating**, is to train multiple models independently on different bootstrapped subsets of the training data, and then the predictions are averaged (for regressors) or voted upon (for classifiers). Bootstrapping is a statistical technique that generates multiple samples from a single (small) dataset by sampling with replacement so that estimates of the distribution of a statistic, e.g., the mean, variance, or confidence interval, can be made when the underlying distribution of the data is unknown. The following diagram illustrates how boostrapping works.
+
+<img src="image/bootstrapping.png" width="1000"> 
+
+Bagging is particularly effective for reducing variance and preventing overfitting, especially in models with high variability such as decision trees. A high-variability model highly depends on the training dataset. If a different training set is used, then the model can behave quite differently. With bootstrapping, we are creating a group of approximately independent and identically distributed (i.i.d.) training sets, and an individual model (with high variance) is trained on each of the sets. By combining the models and averaging the predictions, the ensemble is likely less variable than any of its component learners.
+
+Let $\{(\boldsymbol{x}_1, y_1), \dots, (\boldsymbol{x}_N, y_N)\}$ be a training dataset for a regression problem. Each feature $\boldsymbol{x}_i$ is $d$-dimensional. Suppose $M$ samples each of size $N$ are obtained by bootstrapping. For each bootstrapped samples $S_1, S_2,\dots, S_M$, we fit a model $f_i(x), i=1,\dots,M$. Then the ensemble estimate $f^\text{E}(\boldsymbol{x})$ for a new data instance $\boldsymbol{x}$ is computed as the average of the predictions from the individual models:
+
+\begin{equation*}
+f^\text{E}(\boldsymbol{x}) = \frac{1}{M}\sum_{i=1}^Mf_i(\boldsymbol{x})
+\end{equation*}
+
+For a $K$-class classification problem, the algorithm works similarly. With the individual learners $f_i(x), i=1,\dots,M$, we can obtain a vector $(p_1(\boldsymbol{x}), p_2(\boldsymbol{x}), \dots, p_K(\boldsymbol{x}))$, where $p_i(\boldsymbol{x})$ represents the proportion of the learners that predict class $i$ for the new instance $\boldsymbol{x}$. Then the ensemble estimate is:
+
+\begin{equation*}
+f^\text{E}(\boldsymbol{x}) = \text{arg}\max_{k\in \{1,2,\dots,K\}}p_k(\boldsymbol{x}) = \text{arg}\max_{k\in \{1,2,\dots,K\}}\sum_{i=1}^M \mathbb{I}(f_i(\boldsymbol{x})=k)
+\end{equation*}
+
+where $\mathbb{I}(\cdot)$ is the indicator function. This above voting method is called **hard voting** or **majority voting**. Another way of voting is to consider at the probability of predicting a class for a new instance $(\boldsymbol{x})$ for each learner $f_i$, if the individual learners are equipped with such probabilities (e.g. decision trees). Let $p_{i,j}(\boldsymbol{x})$ denote the probability of learner $f_i$ predicting class $j$ for data instance $(\boldsymbol{x})$, where $1\le i\le N$, and $1\le j\le K$. If we average these probabilities for each $j$, and find the class with the largest average, we can define the **soft voting** rule:
+
+\begin{equation*}
+f^\text{E}(\boldsymbol{x}) = \text{arg}\max_{k\in \{1,2,\dots,K\}}\left\{\frac{1}{M}\sum_{i=1}^Mp_{i,k}\right\}
+\end{equation*}
+
+For instance, suppose there are three models $f_1, f_2, f_3$ in the ensemble to predict two classes labeled $1$ and $2$, and the probabilities are:
+
+\begin{equation*}
+p_{1,1} = 0.7, p_{1,2} = 0.3, p_{2,1} = 0.4, p_{1,2} = 0.6, p_{3,1} = 0.8, p_{3,2} = 0.2, 
+\end{equation*}
+
+Then the average probabilities are $(0.7+0.4+0.8)/3=0.63$ for predicting class 1, and $(0.3+0.6+0.2)/3=0.37$ for predicting class 2. The final prediction is class 1 based on the soft voting rule. Soft voting considers the confidence levels of each model, and hence can lead to more accurate ensemble prediction, especially when the individual models are not in strong agreement. However, it does require the individual learners to be capable of outputting probabilities associated with predictions, which many models fail to do.
+
+In the bagging algorithm above, we assume the sampling is done with replacement. In the case of no replacement, the method is called **pasting**. In some cases, we may want to sample from the feature space (i.e., use a subset of features), e.g., when the dimension of the feature space is large. If both the features and data points are randomly selected to create distinct training sets for individual models, then the method is called **random patches**. If only the features are sampled and all the data points are used for the individual models, then the method is called **random subspaces**. In addition, we noticed an obvious advantage of applying bagging (or pasting, random patches, random subspaces), which is training the individual learners can be easily parallelized. This property enables us to train a ensemble model with a large number of components.
+
+**Example 7-1**
+
+Construct a bagging ensemble of 50 decision trees with no regularization for the Iris dataset. Use the petal length and width as features. Each tree component is trained with 100 bootstrapped instances.
+
+```{python}
+from sklearn.datasets import load_iris
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import BaggingClassifier
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+# Load the Iris dataset
+# Use only the last two features petal length and width
+iris = load_iris()
+X, y = iris.data[:, 2:], iris.target
+
+# Creating the bagging ensemble,
+# each member with a sample size of 100.
+bag_clf = BaggingClassifier(estimator=DecisionTreeClassifier(), n_estimators=50,
+                            max_samples=100, random_state=32)
+bag_clf.fit(X, y)
+```
+
+```{python}
+# Plot the decision boundary
+# generage grid
+x1 = np.linspace(X[:,0].min()-0.1, X[:,0].max()+0.1, 100)
+x2 = np.linspace(X[:,1].min()-0.1, X[:,0].max()+0.1, 100)
+X1, X2 = np.meshgrid(x1, x2)
+# flatten X1 and X2
+r1, r2 = X1.flatten(), X2.flatten()
+# make r1 and r2 2D
+r1, r2 = r1.reshape((len(r1), 1)), r2.reshape((len(r2), 1))
+# horizontally stack r1 and r2
+grid = np.hstack((r1,r2))
+# now grid is a feature matrix
+# get predicted labels for grid
+yhat = bag_clf.predict(grid)
+# reshape yhat so that it has the same shape as X1 and X2
+ZZ = yhat.reshape(X1.shape)
+plt.contourf(X1, X2, ZZ, cmap='Paired')
+plt.scatter(X[y == 0, 0], X[y == 0, 1],
+marker='o', c='b', s=24, label='Iris-Setosa')
+plt.scatter(X[y == 1, 0], X[y == 1, 1],
+marker='s', c='g', s=24, label='Iris-Versicolor')
+plt.scatter(X[y == 2, 0], X[y == 2, 1],
+marker='s', c='y', s=24, label='Iris-Virginica')
+plt.legend(fontsize=16)
+plt.xlabel('Petal length', fontsize=16)
+plt.ylabel('Petal width', fontsize=16);
+plt.title('Decision boundary for the bagging ensemble');
+```
+
+### Out-of-Bag Score
+
+A byproduct of bagging is that we have a measure to estimate how well the ensemble model performs for new data points, without actually having new data points or evaluating the ensemble model. The reason is that each individual model only sees part of the training data points, since the training set for each individual model is obtained from bootstrapping the entire training dataset. Hence, how the models perform on the data instances they did not see during the training process can be an estimator on how well the ensemble model generalizes. To be specific, a measure can be defined in this way: 1) for each data instance in the training set, we find all the models that did not use it during the training process; 2) evaluate these models at the data instance, and take the majority vote; 3) the majority vote is either equal to the true label or not; we compute the proportion of the data instances for which the true labels equal the majority votes. The proportion is defined as the **out-of-bag score** (**OOB score**). Mathematically, let $D_i$, $1\le i\le M$ be the set of data points used to train model $f_i$. Denote the out-of-bag majority vote for an instance $\boldsymbol{x}$ as $f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}$. Then
+
+\begin{equation*}
+f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}) = \text{arg}\max_{k\in\{1,2,\dots,K\}}\sum_{i=1}^M\mathbb{I}(f_i(\boldsymbol{x})=k)\cdot \mathbb{I}(\boldsymbol{x}\notin D_i)
+\end{equation*}
+
+and the OOB score can be computed as
+
+\begin{equation*}
+s_{\text{OOB}} = \frac{1}{N} \sum_{i=1}^N\mathbb{I}(f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}_i)=y_i)
+\end{equation*}
+
+Similary, we can define the **OOB error**, which is simply $1$ minus the OOB score:
+
+\begin{equation*}
+e_{\text{OOB}} = \frac{1}{N} \sum_{i=1}^N\mathbb{I}(f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}_i)\ne y_i) = 1- s_{\text{OOB}}
+\end{equation*}
+
+We now continue with the previous example and compute the OOB score.
+
+```{python}
+# The difference is to set oob_score=True
+bag_clf = BaggingClassifier(estimator=DecisionTreeClassifier(), n_estimators=50,
+                            max_samples=100, oob_score=True, random_state=32)
+bag_clf.fit(X, y)
+```
+
+```{python}
+# Now we can see what the OOB socre is:
+bag_clf.oob_score_
+```
+
+To see the detailed information on $f^{\text{E}}_{\text{OOB}}$ for each data instance $\boldsymbol{x}$, we can do
+
+```{python}
+bag_clf.oob_decision_function_
+```
+
+For example, for the last data instance, among all the individual models not using it during the training stage, 90.2\% of them predict it to be Verginica, while 9.8\% predict it to be Versicolor ($f^{\text{E}}_{\text{OOB}}=3$).
+
+## Random Forests
+Random Forest (RF) is a variation of bagging. The motivation behind RF is to create training datasets for individual trees that are less dependent on each other (a collection of decorrelated trees). To this end, more randomness is introduced in the sampling process. For each individual model, a bootstrapped sample is first randomly selected. In the following process that construct a decision tree, for each node, instead of looking at all the possible choices of feature for a split and all the split points, RF randomly selects a subset of $k$ features, where $k<d$, a split criterion is decided based on the subset of features. Note that if $k=d$, then the ensemble is simply a regular bagging of decision trees. Usually, $k$ is chosen as $\log_2 d$. The randomness resulting from randomly sampling the features increase the independency of the individual models in the ensemble.
+
+Now we use *RandomForestClassifier* to perform RF with Python for the wine data set (https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-dataset).
+
+```{python}
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+# Load the Wine dataset
+wine = load_wine()
+X, y = wine.data, wine.target
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize and train the Random Forest Classifier
+rf_clf = RandomForestClassifier(n_estimators=100, random_state=21)
+rf_clf.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = rf_clf.predict(X_test)
+
+# Evaluate the model's performance
+accuracy = rf_clf.score(X_test, y_test)
+print(f"Random Forest Classifier Accuracy: {accuracy:.2f}")
+```
+
+We achieved an accuracy of $1.0$. It is not surprising that random forest performs so well. Actually, RF is used much more often than the other bagging techniques, and it is also commonly used as a baseline model, before more complicated models, such as deep neural networks, are attempted.
+
+### Importance Score associate with Random Forests
+
+In Random Forests, feature importance scores are a byproduct that can be used to evaluate the significance of each feature in predicting the target variable. Feature importance is an important topic in machine learning interpretability/explainability. Many models do not carry built-in feature importance scores as RF, and hence one has to apply some model-agnostic methods to compute those scores. As a result, this is a key advantage of Random Forests, as they directly provide a way to understand which features are most influential in the model's predictions.
+
+The most common method for calculating feature importance for RF is by considering the how much each feature contributes to reducing the impurity (e.g., Gini impurity) in the decision trees within the Random Forest.
+For each feature, the decrease in impurity is averaged over all the trees in the forest. A feature that results in a significant decrease in impurity is considered more important.
+
+```{python}
+# Print out the feature importances for all features:
+print('feature importance:', rf_clf.feature_importances_)
+print()
+# A better print-out: including the feature names,
+# so that we know which feature importance is for which feature
+for i in range(rf_clf.feature_importances_.size):
+    print(wine["feature_names"][i], rf_clf.feature_importances_[i])
+```
+
+The results show that the features "alcohol", "flavanoids", "color_intensity", "od280/od315_of_diluted_wines", and "proline" play a more important role than the others in the predictions of the ensemble model.
+
+## Boosting
+
+Boosting works differently from bagging, where a collection of independent weak learners with high variance are combined to produce a model that generalizes well. For boosting, the idea is that a collection of sequential models with high bias are combined to produce a stronger predictive model. Each new model in the ensemble is trained sequentially with the purpose of correcting the errors made by the previous models. Two boosting techniques are commonly used: **AdaBoost** and **Gradient Boosting**. We start with the discussion of AdaBoost.
+
+### Adaptive Boosting (AdaBoost)
+
+The idea of AdaBoost is to assign weights to training data instances. A subsequent model tries to put more weights on the instances that are predicted wrong by the previous models. The final ensemble model is a linear combination (weighted sum) of all the individual models with more accurate individual models assigned a larger coefficients (weights). The algorithm works as follows.
+
+Step 1. Initialize the weights for data instances
+
+- All data instances are initially assigned an equal weight, $w_i^{(1)} = \frac{1}{N}$, $1\le i\le N$. Here the superscript denotes the iteration number.
+
+Step 2. Train weak learners
+
+For each iteration $m$, $1\le i\le M$, where $M$ is the number of individual models to be constructed,
+
+-  train a weak learner $f_m$, such as a shallow decision tree, based on the weighted samples. That is, minimizing a weighted error function (e.g.,
+in Scikit-Learn the fit method for the classifier has a sample_weight optional input).
+
+- compute the weighted error:
+
+\begin{equation*}
+\epsilon_m = \frac{\sum_{i=1}^{N} w_i^{(m)} \cdot \mathbb{I}\{ f_m(\boldsymbol{x}_i) \neq y_i \}}{\sum_{i=1}^{N} w_i^{(m)}}
+\end{equation*}
+This can be explained as the weighted sum of misclassified instances. The denominator is always 1 as seen in the following steps. Note that if the weights are equal for all data instances, $\epsilon_m$ is simply the proportion of data instances that are predicted wrong by $f_m$.
+
+- compute the weight of learner $f_m$
+
+\begin{equation*}
+\alpha_m = \frac{1}{2} \ln \left(\frac{1 - \epsilon_m}{\epsilon_m}\right)
+\end{equation*}
+
+The smaller $\epsilon_m$, the larger the weight $\alpha_m$, as seen below. As $\alpha_m$ approaches $0.5$ (meaning approaching a random model), $\alpha_m$ is close to 0.
+
+```{python}
+eps = np.linspace(0.00001, 0.5, 100)
+plt.plot(eps, np.log((1-eps)/eps), 'b-')
+plt.xlabel('$\epsilon_m$')
+plt.ylabel('$\ln{((1-\epsilon_m)/\epsilon_m)}$');
+```
+
+Step 3. Update Sample Weights
+
+- Increase the weights of $f_m$-misclassified samples:
+
+\begin{equation*}
+w_i^{(m+1)} = w_i^{(m)} \cdot \exp \left( \alpha_m \cdot \mathbb{I}\{ f_m(\boldsymbol{x}_i) \neq y_i \} \right),\quad 1\le i\le N
+\end{equation*}
+This means the weights of the misclassified instances are magnified, while the weights of the correctly classified instances get smaller, due to the normalization below.
+
+- Normalize weights
+
+\begin{equation*}
+w_i^{(m+1)} = \frac{w_i^{(m+1)}}{\sum_{j=1}^{N} w_j^{(m+1)}},\quad 1\le i\le N
+\end{equation*}
+
+Step 4. Combine Weak Learners
+
+- The final ensemble model is:
+
+\begin{equation*}
+f^{\text{E}}(\boldsymbol{x}) = \text{sign} \left( \sum_{m=1}^{M} \alpha_m \cdot f_m(\boldsymbol{x}) \right)
+\end{equation*}
+
+The principles behind these formulas are the minimization of an exponential loss function (see Friedman (2000)). Due to the complexity of the derivation, we will leave it out.
+
+**Example 7-2**
+
+Apply AdaBoost to the breast cancer dataset (https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-dataset). The weak learners are decision trees with a maximum depth of 1.
+
+```{python}
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+
+# Load the Breast Cancer dataset
+data = load_breast_cancer()
+X, y = data.data, data.target
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize and train the weak learners
+ada_model = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1), 
+                               algorithm='SAMME',  # for the purpose of suppressing a warning
+                               n_estimators=100, random_state=90)
+ada_model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = ada_model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"AdaBoost Classifier Accuracy: {accuracy:.2f}")
+```
+
+### Gradient Boosting
+
+Gradient Boosting builds models sequentially in the way that each subsequent model is trained to correct the residual errors of the combined predictions from previous models. The final model is a weighted sum of all the individual models. The name comes from the fact that it uses gradient descent to minimize the loss function. Here are the details of the algorithm.
+
+Step 1. Initialize a model
+
+The initial model, $f_0(\boldsymbol{x}), $used in gradient boosting is typically a constant function, and the lost function $L$ is typically the Mean Squared Error (MSE). Hence the initial model is:
+
+\begin{equation*}
+f_0(\boldsymbol{x}) = \arg \min_c \sum_{i=1}^{N} L(y_i, c)
+\end{equation*}
+
+We have seen in the chapter on decision trees that the solution to the optimization problem is trivial:
+
+\begin{equation*}
+f_0(\boldsymbol{x}) =\frac{1}{N}\sum_{i=1}^{N} y_i
+\end{equation*}
+
+Step 2. Compute the residuals
+
+For each iteration $m$, $1\le i\le M$, where $M$ is the number of individual models to be constructed, we are trying to find the $m$th individual model $f_m$. By the motivation of gradient boosting, $f_m$ approximates the residuals of the current model, which is the negative gradient of the loss function $L$ with respect to the current prediction:
+
+\begin{equation*}
+r_i^{(m)} = -\left[\frac{\partial L(y_i, F(\boldsymbol{x}_i))}{\partial F(\boldsymbol{x}_i)}\right]_{F(\boldsymbol{x})=F_{m-1}(\boldsymbol{x})}
+\end{equation*}
+
+where $F_{m-1}(\boldsymbol{x})$ is the ensemble model with $m-1$ individual models. The residual represents the direction where the ensemble model needs to move to fast decrease the cost function. In the case of $L$ being the MSE function, the residual $r_i^{(m)}$ is simply $y_i-F_{m-1}(\boldsymbol{x_i})$, the difference between the true value (label) and the current ensemble prediction.
+
+Step 3. Fit the new individual model $f_m$ that approximates the residual $r_i^{(m)}$
+
+\begin{equation*}
+f_m(\boldsymbol{x}) = \arg \min_{f} \sum_{i=1}^{N} \left(r_i^{(m)} - f(\boldsymbol{x}_i)\right)^2
+
+\end{equation*}
+
+Step 4. Update the ensemble model $F_m(\boldsymbol{x})$
+
+\begin{equation*}
+F_m(\boldsymbol{x}) = F_{m-1}(\boldsymbol{x}) + \eta f_m(\boldsymbol{x})
+\end{equation*}
+
+where $\eta$ is the learning rate.
+
+At the end, we have the final gradient boost ensemble model, $F^{\text{E}}(\boldsymbol{x})=F_M(\boldsymbol{x})$. It is clearly seen that the whole process is a gradient descent in the function space. 
+
+Now we use decision trees as the individual models in the gradient boosting ensemble for a synthetic problem. Such gradient boosting is called **Gradient Tree Boosting**, or **Gradient Boosted Regression Trees (GBRT)**. 
+
+**Example 7-3**
+
+Use sklearn.ensemble.GradientBoostingRegressor to build a gradient boosting model for noisy data generated from the underlying function 
+
+\begin{equation*}
+f(x) = 2x + \sin{x}
+\end{equation*}
+
+```{python}
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error
+
+# Create a synthetic dataset
+ndata = 100  # 100 data points
+np.random.seed(10)
+X = np.linspace(0, 2*np.pi, ndata)  # data points are between 0 and 2pi
+y = 2 * X + np.sin(X) + np.random.normal(0, 0.5, X.size)
+X = X[:, np.newaxis]
+
+# Initialize and train a Gradient Boosting Regressor with 3 components.
+gbr3 = GradientBoostingRegressor(n_estimators=3, max_depth=1, learning_rate=1, random_state=42)
+gbr3.fit(X, y)
+
+# Predictions
+y_pred_3 = gbr3.predict(X)
+
+# Plotting the results
+fig, ax = plt.subplots(1, 3, figsize=(21, 6))
+
+ax[0].plot(X, y, 'bo', label='Training Data')
+ax[0].plot(X, y_pred_3, 'g-', label='GBRT-M=3')
+ax[0].legend()
+ax[0].set_xlabel('x')
+ax[0].set_ylabel('y');
+
+# Initialize and train a Gradient Boosting Regressor with 10 components.
+gbr10 = GradientBoostingRegressor(n_estimators=10, max_depth=1, learning_rate=1, random_state=42)
+gbr10.fit(X, y)
+
+# Predictions
+y_pred_10 = gbr10.predict(X)
+
+# Plotting the results
+ax[1].plot(X, y, 'bo', label='Training Data')
+ax[1].plot(X, y_pred_10, 'g-', label='GBRT-M=10')
+ax[1].legend()
+ax[1].set_xlabel('x')
+ax[1].set_ylabel('y');
+
+# Initialize and train a Gradient Boosting Regressor with 20 components.
+gbr20 = GradientBoostingRegressor(n_estimators=20, max_depth=1, learning_rate=1, random_state=42)
+gbr20.fit(X, y)
+
+# Predictions
+y_pred_20 = gbr20.predict(X)
+
+# Plotting the results
+ax[2].plot(X, y, 'bo', label='Training Data')
+ax[2].plot(X, y_pred_20, 'g-', label='GBRT-M=20')
+ax[2].legend()
+ax[2].set_xlabel('x')
+ax[2].set_ylabel('y');
+```
+
+There is an obvious improvement by increasing $M$ from 3 to 10. Further increasing $M$ to 20 does not lead to obvious change of the ensemble model. The gradient boosting algorithm tells us that the ensemble model is obtained iteratively by adding the component that approximates the previous residuals. We verify this by not using the built-in GradientBoostingRegressor class.
+
+```{python}
+from sklearn.tree import DecisionTreeRegressor
+
+fig, ax = plt.subplots(3, 2, figsize=(14, 21))
+
+# Train the DT regressor on X and y
+# It is the first decision tree regressor on the data
+dt_reg1 = DecisionTreeRegressor(max_depth=1)
+dt_reg1.fit(X, y)
+
+ax[0,0].plot(X, y, 'bo', label='Training Data')
+ax[0,0].plot(X, dt_reg1.predict(X), 'g-', label='$f_1(x)$')
+ax[0,0].legend()
+ax[0,0].set_xlabel('x')
+ax[0,0].set_ylabel('y')
+ax[0,0].set_title('Tree predictions, M=1')
+
+# The ensemble will have only one individual model
+ax[0,1].plot(X, y, 'bo', label='Training Data')
+ax[0,1].plot(X, dt_reg1.predict(X), 'r-', label='$F(x) = f_1(x)$')
+ax[0,1].legend()
+ax[0,1].set_xlabel('x')
+ax[0,1].set_ylabel('y');
+ax[0,1].set_title('Ensemble predictions');
+
+
+# Train the second DT regressor on the residual errors made by the first predictor
+# It is the second decision tree regressor on the data
+r = y - dt_reg1.predict(X)
+dt_reg2 = DecisionTreeRegressor(max_depth=1)
+dt_reg2.fit(X, r)
+
+ax[1,0].plot(X, r, 'bo', label='Training Data')
+ax[1,0].plot(X, dt_reg2.predict(X), 'g-', label='$f_2(x)$')
+ax[1,0].legend()
+ax[1,0].set_xlabel('x')
+ax[1,0].set_ylabel('y')
+ax[1,0].set_title('Tree predictions, M=2')
+
+# The ensemble will have two individual models
+ax[1,1].plot(X, y, 'bo', label='Training Data')
+ax[1,1].plot(X, dt_reg1.predict(X)+dt_reg2.predict(X), 'r-', label='$F(x) = f_1(x)+f_2(x)$')
+ax[1,1].legend()
+ax[1,1].set_xlabel('x')
+ax[1,1].set_ylabel('y');
+ax[1,1].set_title('Ensemble predictions');
+
+# Train the third DT regressor on the residual errors made by the first two predictors
+# It is the third decision tree regressor on the data
+r = r - dt_reg2.predict(X)
+dt_reg3 = DecisionTreeRegressor(max_depth=1)
+dt_reg3.fit(X, r)
+
+ax[2,0].plot(X, r, 'bo', label='Training Data')
+ax[2,0].plot(X, dt_reg3.predict(X), 'g-', label='$f_3(x)$')
+ax[2,0].legend()
+ax[2,0].set_xlabel('x')
+ax[2,0].set_ylabel('y')
+ax[2,0].set_title('Tree predictions, M=3')
+
+# The ensemble will have two individual models
+ax[2,1].plot(X, y, 'bo', label='Training Data')
+ax[2,1].plot(X, dt_reg1.predict(X)+dt_reg2.predict(X)+dt_reg3.predict(X), 
+             'r-', label='$F(x) = f_1(x)+f_2(x)+f_3(x)$')
+ax[2,1].legend()
+ax[2,1].set_xlabel('x')
+ax[2,1].set_ylabel('y');
+ax[2,1].set_title('Ensemble predictions');
+```
+
+Note that the plot in the bottom right corner is the same as that for the gradient boosting regressor with 3 components trained using the built-in class in the previous cell, confirming that either way we obtain the same ensemble model.
+
+### Optimal Ensemble Size
+
+We can use a validation set to monitor the model's performance and perform *early stopping* when the model's performance on the validation set starts to decrease. The Python code below does the job.
+
+```{python}
+from sklearn.metrics import mean_squared_error
+
+# We use the same synthetic data
+
+# Split the data into training and validation sets
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=30)
+
+# Initialize a Gradient Boosting Regressor with a large number of estimators
+gbr = GradientBoostingRegressor(n_estimators=200, learning_rate=1, max_depth=1, random_state=42)
+
+# Fit the model while tracking the validation error at each stage
+gbr.fit(X_train, y_train)
+
+# Compute validation error after each stage
+errors_val = [mean_squared_error(y_val, y_pred) for y_pred in gbr.staged_predict(X_val)]
+# Compute training error after each stage
+errors_train = [mean_squared_error(y_train, y_pred_train) for y_pred_train in gbr.staged_predict(X_train)]
+
+# Find the optimal number of estimators (minimizing validation error)
+best_n_estimators = np.argmin(errors_val)  
+print(f"Optimal number of estimators: {best_n_estimators+1}")  # Adding 1 because indexing starts at 0
+
+# Plot the validation error
+plt.figure(figsize=(10, 6))
+plt.plot(range(1, len(errors_val)+1), errors_val, label='Validation Error')
+plt.plot(range(1, len(errors_train)+1), errors_train, label='Training Error')
+plt.axvline(best_n_estimators+1, color='red', linestyle='--', label=f'Optimal # of Estimators = {best_n_estimators+1}')
+plt.xlabel('Number of Estimators')
+plt.ylabel('Validation Error')
+plt.title('Finding Optimal Number of Estimators')
+plt.legend()
+plt.show()
+
+# Re-train the model with the optimal number of estimators
+gbr_optimal = GradientBoostingRegressor(n_estimators=best_n_estimators, learning_rate=1, max_depth=1, random_state=15)
+gbr_optimal.fit(X_train, y_train)
+
+# Evaluate on the validation set
+y_val_pred = gbr_optimal.predict(X_val)
+mse_val = mean_squared_error(y_val, y_val_pred)
+print(f"Validation MSE with optimal estimators: {mse_val:.2f}")
+```
+
+## References
+
+1. J. Friedman, T. Hastie, and R. Tibshirani, Additive logistic regression: a statistical view of boosting (With discussion and a rejoinder by the authors), Annals of Statistics, 28(2): 337-407.
+

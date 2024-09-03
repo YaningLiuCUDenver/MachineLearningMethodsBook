@@ -1,0 +1,440 @@
+---
+title: Support Vector Machines
+jupyter: python3
+---
+
+
+
+*Support vector machines (SVM)*, developed by Cortes and Vapnik (Ref. 1), is a powerful machine learning tool that can be applied to both classification and regression problems. When applied as a classifier, it is called a *support vector classifier*, and a *support vector regressor* when dealing with regression tasks. In this chapter, we will explore the theoretical concepts, mathematical principles, and practical applications of SVM. We start with solving classification problems with SVM.
+
+## Linear Support Vector Machines for Classification
+
+Consider a binary classification problem, where the data $D=\{(\boldsymbol{x}_1,y_1), (\boldsymbol{x}_2,y_2), \dots, (\boldsymbol{x}_N,y_N)\}$, $y_i\in \{-1, 1\}$, are linearly separable. Our goal is to find a linear line (or a plane in 3D and a hyperplane in higher dimensions) that separates the data points. There can be infinitely many such choices, as shown in the figure below. In this example, the blue circles and red squares representing two different classes, with two features $\boldsymbol{x}_1$ and $\boldsymbol{x}_2$. Three lines, $l_1$, $l_2$ and $l_3$, are plotted to show possible ways of separating the data linearly.
+
+<img src="image/LinearlySeparable.png" width="500" height="500"> 
+
+We need some criterion to decide the "best" separating line (or plane in higher dimensions), called **the decision boundary**. Intuitively, we want one that lies far from both datasets, so it has the best tolerance for perturbations/noises in the training data. Such a linear decision boundary can be described as
+\begin{equation*}
+s(\boldsymbol{x}) = \boldsymbol{w}^T\boldsymbol{x} + b = 0
+\end{equation*}
+which is exactly the same form as those used for linear regression and logistic regression. Note that we separated the intercept $b$ from the other coefficients $\boldsymbol{w}$ for an easier discussion of SVM. Assume a feature vector $\boldsymbol{x} = (x_1, x_2, \dots, x_d)^T$ is $d$-dimensional and the training dataset comprises $N$ instances $\boldsymbol{x}_1, \boldsymbol{x}_2, \dots, \boldsymbol{x}_N$.
+
+Suppose the two classes are **linearly separable**, i.e., they can be clearly separated by the linear decision boundary. The class of points with label $+1$ satisfies $s(\boldsymbol{x})>0$ and the other class satisfies $s(\boldsymbol{x})<0$. Predictions are made for new instances in the same fashion. Let $\hat{y}(\boldsymbol{x})$ represent the predicted class for a new instance with features $\boldsymbol{x}$. We have
+
+\begin{equation}
+\hat{y}(\boldsymbol{x})=\left\{\begin{array}{l l}
+-1 & \text { if } s(\boldsymbol{x})=\boldsymbol{w}^{T} \boldsymbol{x}+b<0 \\
+1 & \text { if } s(\boldsymbol{x})=\boldsymbol{w}^{T} \boldsymbol{x}+b > 0
+\end{array}\right.
+\end{equation}
+
+## Margin
+
+As we saw in the figure above, there can be infinitely many ways to define a linear decision boundary. A natural way to select the "optimal" boundary is to find the boundary so that it is as far as possible from both classes of data points. Such a strategy can be described with the help of the concept of **margin**, which is defined as the minimum distance between the boundary and any data point. In the figure below, the margin $m$, corresponding to the distance between boundary $l$ and the data instance closest to $l$ (the red square in the upper right corner), was plotted. An "optimal" boundary can then be defined as the one that has the maximum margin and such a classifier is called a **maximum margin classifier**. For example, $l^*$ represents the maximum margin classifier, and $m^*$ represents the maximum margin. Notice that data instances of the two classes that are closest to the boundary $l^*$ are equidistant from it.
+
+<img src="image/margin.png" width="500" height="500"> 
+
+We now mathematically describe the maximum margin. It can be shown that the distance between an arbitrary point $\boldsymbol{x}$ in the feature space and the decision boundary $s(\boldsymbol{x})=\boldsymbol{w}^T\boldsymbol{x}+b=0$ is
+$$
+\frac{|s(\boldsymbol{x})|}{||\boldsymbol{w}||_2}
+$$
+(see Excercise 5-1). Noting that $|s(\boldsymbol{x})| = y(\boldsymbol{x})s(\boldsymbol{x})$, the distance of $\boldsymbol{x}_i$ to the
+decision boundary can be rewritten as:
+\begin{equation}
+\frac{y_is(\boldsymbol{x}_i)}{||\boldsymbol{w}||_2} = \frac{y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)}{||\boldsymbol{w}||_2}
+\end{equation}
+Margin, defined as the smallest distance between the decision boundary and any data point $\boldsymbol{x}_i$, can be mathematically written as
+$$
+\text{margin} = \min_{1\le i\le N}\frac{y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)}{||\boldsymbol{w}||_2}=\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b).
+$$
+Therefore, the maximum margin is
+$$
+\max_{\boldsymbol{w}, b}\text{margin} = \max_{\boldsymbol{w}, b}\left\{\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)\right\} 
+$$
+and our maximum margin classifier is found by computing
+$$
+\text{arg max}_{\boldsymbol{w}, b}\left\{\frac{1}{||\boldsymbol{w}||_2}\min_{1\le i\le N}y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)\right\} 
+$$
+An important fact related to the distance of $\boldsymbol{x}_i$ to the
+decision boundary is that it is invariant to the linear transformation (rescaling) $\boldsymbol{w}\rightarrow \alpha\boldsymbol{w}$, and $b\rightarrow \alpha b$ (but it does change the value of $y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b)$; see Excercise 5-2). As a result, we can choose the $\alpha$ such that 
+\begin{equation}
+y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) = 1
+\end{equation}
+for the points that are closest to the decision boundary (these points are also called **support vectors**, and hence the name support vector machines), as shown in the figure below:
+
+<img src="image/margin2.png" width="500" height="500"> 
+
+Then the maximum margin problem can be written as
+$$
+\text{arg max}_{\boldsymbol{w}, b}\frac{1}{||\boldsymbol{w}||_2} = \text{arg min}_{\boldsymbol{w}, b}||\boldsymbol{w}||_2^2 = \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2
+$$
+where the last step is for the sake of simpler computation only. Now, the maximum margin criterion is to solve the following optimization problem:
+$$
+\begin{align*}
+&\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 \\
+&\text{subject to } y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1,\quad 1\le i\le N
+\end{align*} 
+$$
+
+## Dual Problem
+
+The problem above is a **quadratic programming problem**, which (called the **primal problem**) can be converted to the **dual problem** by using the method of *Lagrange multipliers*. Using Lagrange multipliers $\alpha_i\ge 0$ for each of the restrains, the Lagrangian function can be written as
+$$
+L(\boldsymbol{w}, b, \boldsymbol{\alpha}) = \frac{1}{2}||\boldsymbol{w}||_2^2 + \sum_{i=1}^N \alpha_i(1- y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b))
+$$
+where $\boldsymbol{\alpha} = (\alpha_1,\dots,\alpha_N)$. Taking derivative with respect to $\boldsymbol{w}$ and $b$, and set them to $0$. After substitution and organization (see Excercise 5-3), we have the dual problem:
+$$
+\begin{align*}
+&\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j \boldsymbol{x}_{i}^T\boldsymbol{x}_{j} \\
+&\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
+\end{align*} 
+$$
+After the dual problem is solved (numerically), for example, by the Sequential Minimal Optimization (SMO) algorithm (see Platt 1998), predictions for new data instances can be made by evaluating
+\begin{equation*}
+s(\boldsymbol{x}) = \boldsymbol{w}^T\boldsymbol{x} + b = \sum_{i=1}^N\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x} + b
+\end{equation*}
+We have not talked about how to compute $b$ yet. Noting that for any support vector $\boldsymbol{x}_s$, the following equation is satisfied:
+\begin{equation*}
+y_is(\boldsymbol{x}_s) = y_i\left(\sum_{i=1}^N\alpha_iy_i\boldsymbol{x}_i^T\boldsymbol{x}_s + b\right) = 1
+\end{equation*}
+and $b$ can be obtained from any of these equations. A more numerically robust way to calculate $b$ is to take the average of the $b$'s solved for from all these equations (see Excercise 5-4):
+\begin{equation*}
+b = \frac{1}{N_{\mathcal{S}}}\sum_{i\in \mathcal{S}}\left(y_i-\sum_{j=1}^N\alpha_jy_j\boldsymbol{x}_j^T\boldsymbol{x}_i\right)
+\end{equation*} 
+where $\mathcal{S}$ denotes the set of indices of the support vectors, and $N_{\mathcal{S}}$ is the total number of support vectors.
+
+**Excercise 5-1**
+
+Show that the distance between an arbitrary point $\boldsymbol{x}$ in the feature space and the decision boundary $s(\boldsymbol{x})=\boldsymbol{w}^T\boldsymbol{x}+b=0$ is
+$$
+\frac{|s(\boldsymbol{x})|}{||\boldsymbol{w}||_2}
+$$
+
+**Excercise 5-2**
+
+Show that the distance of $\boldsymbol{x}$ to the decision boundary is invariant to the rescaling $\boldsymbol{w}\rightarrow \alpha\boldsymbol{w}$, and $b\rightarrow \alpha b$.
+
+**Excercise 5-3**
+
+Derive the dual problem from the primal problem for the maximum margin problem.
+
+**Excercise 5-4**
+
+Show the value of $b$ can be computed by
+
+\begin{equation*}
+    b = \frac{1}{N_{\mathcal{S}}}\sum_{i\in \mathcal{S}}\left(y_i-\sum_{j=1}^N\alpha_jy_j\boldsymbol{x}_j^T\boldsymbol{x}_i\right)
+\end{equation*} 
+
+## Kernel Functions
+
+A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be $\phi(\boldsymbol{x})$. All of the above formulas (s(\boldsymbol{x}), primal problem, and dual problem) need to be changed so that $\boldsymbol{x}$, $\boldsymbol{x}_i$, and $\boldsymbol{x}_j$ will be replaced by $\phi(\boldsymbol{x})$, $\phi(\boldsymbol{x}_i)$, and $\phi(\boldsymbol{x}_j)$, respectively. The problem is computing inner products such as $\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)$ can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function $k(\boldsymbol{x}, \boldsymbol{y})$ exists and
+\begin{align*}
+k(\boldsymbol{x}_i, \boldsymbol{x}_j) = \phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)
+\end{align*}
+That is, there is a function that calculates the inner product of mapped features $\phi(\boldsymbol{x})$ in the higher-dimensional space by evaluating a function defined in the original (low-dimensional) feature space. Such functions $k(\cdot, \cdot)$ are called **kernel functions**. With the kernel function, the dual problem can be rewritten as
+$$
+\begin{align*}
+&\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j k(\boldsymbol{x}_{i},\boldsymbol{x}_{j}) \\
+&\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
+\end{align*} 
+$$
+and the linear function $s(\boldsymbol{x})$ becomes
+\begin{equation*}
+s(\boldsymbol{x}) = \sum_{i=1}^N\alpha_iy_ik(\boldsymbol{x}_i,\boldsymbol{x}) + b
+\end{equation*}
+Since, we are not sure what $\phi(\cdot)$ looks like, and thus finding the kernel function corresponding to $\phi(\cdot)$ is not possible. As a result, we often turn to some commonly used kernel functions as shown below, and in fact, each of them implicitly defines a map $\phi(\cdot)$.
+$$
+\begin{align*}
+\text{ Linear: } k(\boldsymbol{x}, \boldsymbol{y}) &= \boldsymbol{x}^T\boldsymbol{y} \\
+\text { Polynomial: } k(\boldsymbol{x}, \boldsymbol{y}) &= \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right)^{d} \\
+\text { Gaussian RBF: } k(\boldsymbol{x}, \boldsymbol{y}) &= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_2^{2}\right) \\
+\text { Sigmoid: } k(\boldsymbol{x}, \boldsymbol{y}) &= \tanh \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right) \\
+\text{ Laplacian: } k(\boldsymbol{x}, \boldsymbol{y}) &= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_1\right)
+\end{align*}
+$$
+These standard kernel functions can be combined to form new kernel functions. For instance, a linear combination of kernel functions is still a kernel function.
+
+## Soft Margin
+
+Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary ($y_is(\boldsymbol{x}_i)\lt 0$), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target $+1$) on the wrong side, and one instance of the red square class (target $-1$). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called **soft margin classification**.
+
+<img src="image/softmargin.png" width="500" height="500"> 
+
+A possible cost function to achieve a balance of maximum margin and limiting cases of being on the wrong side and inside the margin boundary (characterized by $y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)<1$) is: 
+
+\begin{equation*}
+\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N(1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))^+
+\end{equation*}
+
+where $C>0$ is a constant that controls the penalty to be applied for the instances that result in violations, and $(\cdot)^+$ is the *Heaviside step function* with $(0)^+=0$. However, it is nonconvex and not continuous, leading to difficulty in solving the optimization problem. Other functions can be used to replace the Heaviside step function. One example is the **hinge loss function**:
+
+\begin{equation*}
+L_{\text{hinge}}(x) = \max(0, 1-x)
+\end{equation*}
+
+```{python}
+# Plot of a hinge function
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+x = np.linspace(-2, 4, 100)
+y = np.zeros(100)
+for i in range(100):
+    y[i] = max(0, 1-x[i])
+plt.plot(x, y, 'b-')
+plt.xlabel('x')
+plt.title('Hinge Loss');
+```
+
+With the hinge loss, the soft margin objective function can be written as:
+
+\begin{align*}
+&\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)) \\
+&= \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\max(0, 1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))
+\end{align*}
+
+The hinge loss function penalizes more those points farther away from the boundary. Introduce **slack variables** $\xi_i\ge 0$, $1\le i\le N$, and $\xi_i = L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))=|y_i-s(\boldsymbol{x}_i)|$. The objective function can be rewritten as
+
+\begin{align*}
+&\text{arg min}_{\boldsymbol{w}, b,\varepsilon_i}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\varepsilon_i \\
+&\text{subject to } y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i,\quad \varepsilon_i\ge 0,\, i=1,\dots, N
+\end{align*}
+This is still a quadratic problem and similarly a dual problem can be obtained using Lagrange multiplier.
+
+**Excercise 5-5**
+
+Show the constraints $y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i$, $i=1,\dots, N$ need to hold for the soft margin classification problem.
+
+**Example 5-1**
+
+Build a binary SVM classifier for the Iris Dataset to classify virginica and non-virginica. Consider two cases: 1) using sepal length and petal width as features; 2) using petal length and petal width as features.
+
+```{python}
+from sklearn import datasets
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import LinearSVC
+
+# Load the data
+iris = datasets.load_iris()
+# Show what the iris dataset look like
+print(iris)
+# Use sepal length and petal width as features
+X = iris["data"][:, [0, 3]]  # Sepal length and petal width
+# 1 if Iris-Virginica, else 0
+y = (iris["target"] == 2).astype('int')
+# Build linear svm classifier
+# Scaling is important for SVM.
+# Build a Pipeline that first scales data and then trains the model
+# For hard margin, set C=0.0
+svm_clf = Pipeline([
+    ("scaler", StandardScaler()),
+    ("linear_svc", LinearSVC(C=1.0, loss="hinge", dual="auto", random_state=36)),
+    ])
+# Train the model
+svm_clf.fit(X, y);
+```
+
+```{python}
+# Plot the decision boundary
+
+X_scaled = svm_clf["scaler"].transform(X)
+x_db = [X_scaled[:,0].min(), X_scaled[:,0].max()]
+beta0 = svm_clf["linear_svc"].intercept_[0]
+beta1 = svm_clf["linear_svc"].coef_[0][0]
+beta2 = svm_clf["linear_svc"].coef_[0][1]
+y_db = -(beta0 + np.dot(beta1, x_db)) / beta2
+plt.scatter(X_scaled[iris["target"] == 2, 0], X_scaled[iris["target"] == 2, 1],
+            marker='^', c='g', s=24, label='Irs-Virginica')
+plt.scatter(X_scaled[iris["target"] != 2, 0], X_scaled[iris["target"] != 2, 1],
+            marker='s', c='b', s=24, label='Not Iris-Virginica')
+plt.plot(x_db, y_db, label='Decision Boundary', c='r')
+plt.legend(fontsize=16, loc='lower right')
+plt.xlabel('Sepal length', fontsize=16)
+plt.ylabel('Petal width', fontsize=16);
+```
+
+```{python}
+# Use petal length and width as features
+X = iris["data"][:, 2:]  # petal length and width
+# Train the model
+svm_clf.fit(X, y)
+
+# Plot the decision boundary
+
+X_scaled = svm_clf["scaler"].transform(X)
+x_db = [X_scaled[:,0].min(), X_scaled[:,0].max()]
+beta0 = svm_clf["linear_svc"].intercept_[0]
+beta1 = svm_clf["linear_svc"].coef_[0][0]
+beta2 = svm_clf["linear_svc"].coef_[0][1]
+y_db = -(beta0 + np.dot(beta1, x_db)) / beta2
+plt.scatter(X_scaled[iris["target"] == 2, 0], X_scaled[iris["target"] == 2, 1],
+            marker='^', c='g', s=24, label='Irs-Virginica')
+plt.scatter(X_scaled[iris["target"] != 2, 0], X_scaled[iris["target"] != 2, 1],
+            marker='s', c='b', s=24, label='Not Iris-Virginica')
+plt.plot(x_db, y_db, label='Decision Boundary', c='r')
+plt.legend(fontsize=16, loc='lower right')
+plt.xlabel('Petal length', fontsize=16)
+plt.ylabel('Petal width', fontsize=16);
+```
+
+**Example 5-2**
+
+Consider isotropic Gaussian blobs for binary classification (use sklearn.datasets.make_blobs). Use a sigmoid kernel with $\gamma$ set to "scale" to train a SVM.
+
+```{python}
+from sklearn.svm import SVC
+
+# Generate two isotropic Gaussian blobs with two features, each blob has 200 data points
+X, y = datasets.make_blobs(n_samples=200, n_features=2, centers=2, random_state=3)
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=y, s=16)
+plt.xlabel('$x_1$', fontsize=16)
+plt.ylabel('$x_2$', fontsize=16)
+plt.title('Two isotropic Gaussian blobs');
+```
+
+```{python}
+# Train SVM with a sigmoid kernel
+svm_classifier = SVC(kernel='sigmoid', gamma='scale')
+svm_classifier.fit(X, y)
+
+# Plot the decision boundary
+# generage grid
+x1 = np.linspace(X[:,0].min(), X[:,0].max(), 400)
+x2 = np.linspace(X[:,1].min(), X[:,1].max(), 400)
+X1, X2 = np.meshgrid(x1, x2)
+# flatten X1 and X2
+r1, r2 = X1.flatten(), X2.flatten()
+# make r1 and r2 2D
+r1, r2 = r1.reshape((len(r1), 1)), r2.reshape((len(r2), 1))
+# horizontally stack r1 and r2
+grid = np.hstack((r1,r2))
+# now grid is a feature matrix
+# get predicted labels for grid
+yhat = svm_classifier.predict(grid)
+# reshape yhat so that it has the same shape as X1 and X2
+ZZ = yhat.reshape(X1.shape)
+plt.contourf(X1, X2, ZZ, cmap='Paired')
+plt.scatter(X[y == 0, 0], X[y == 0, 1], marker='o', c='b', s=24, label='Label 0')
+plt.scatter(X[y == 1, 0], X[y == 1, 1], marker='s', c='g', s=24, label='Label 1')
+plt.legend(fontsize=16)
+plt.xlabel('$X_1$', fontsize=16)
+plt.ylabel('$X_2$', fontsize=16);
+```
+
+**Example 5-3**
+
+Train an SVM for two circles (sklearn.datasets.make_circles) using a Gaussin rbf kernel with $\gamma=0.7$.
+
+```{python}
+#| autoscroll: false
+#| ein.hycell: false
+#| ein.tags: worksheet-0
+#| slideshow: {slide_type: '-'}
+# Create two circles with a total number of 200 points, 
+# a scale factor of 0.3 between inner and outer circle in the range [0, 1)
+# and a standard deviation of 0.1 of Gaussian noise added to the data.
+X, y = datasets.make_circles(n_samples=100, factor=0.3, noise=0.1, random_state=10)
+
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=y, s=16)
+plt.xlabel('$x_1$', fontsize=16)
+plt.ylabel('$x_2$', fontsize=16)
+plt.title('Two circles');
+
+# Train SVM with a sigmoid kernel
+svm_classifier = SVC(kernel='rbf', gamma=0.7)
+svm_classifier.fit(X, y);
+```
+
+```{python}
+# Plot the decision boundary
+# generage grid
+x1 = np.linspace(X[:,0].min(), X[:,0].max(), 400)
+x2 = np.linspace(X[:,1].min(), X[:,1].max(), 400)
+X1, X2 = np.meshgrid(x1, x2)
+# flatten X1 and X2
+r1, r2 = X1.flatten(), X2.flatten()
+# make r1 and r2 2D
+r1, r2 = r1.reshape((len(r1), 1)), r2.reshape((len(r2), 1))
+# horizontally stack r1 and r2
+grid = np.hstack((r1,r2))
+# now grid is a feature matrix
+# get predicted labels for grid
+yhat = svm_classifier.predict(grid)
+# reshape yhat so that it has the same shape as X1 and X2
+ZZ = yhat.reshape(X1.shape)
+plt.contourf(X1, X2, ZZ, cmap='Paired')
+plt.scatter(X[y == 0, 0], X[y == 0, 1], marker='o', c='b', s=24, label='Label 0')
+plt.scatter(X[y == 1, 0], X[y == 1, 1], marker='s', c='g', s=24, label='Label 1')
+plt.legend(fontsize=16)
+plt.xlabel('$X_1$', fontsize=16)
+plt.ylabel('$X_2$', fontsize=16);
+```
+
+### SVM Regression
+
+The SVM algorithm can handle both linear and nonlinear classification, as well as linear and nonlinear regression. In SVM for regression, the aim is to fit as many data points as possible within a margin, while minimizing the number of data points that fall outside the margin (see figure below; the points located outside of the margin are colored differently). The width of this margin boundary is controlled by a hyperparameter $\epsilon$. The following figure illustrates a linear SVM Regression model with a hyperparameter $\epsilon$. The idea is that we can tolerate a deviation that is less than $\epsilon$ for a prediction $f(\boldsymbol{x})-y$, where $f(\boldsymbol{x})$ is the SVM regression prediction, and $y$ is the target corresponding to feature $\boldsymbol{x}$. There will be a penalty when the deviation is greater than $\epsilon$. The SVR regression problem can thus be described mathematically as:
+
+\begin{equation*}
+\min_{\boldsymbol{w},b}\frac{1}{2}\|\boldsymbol{w}\|^2 + C\sum_{i=1}^NL_{\epsilon}(f(\boldsymbol{x}_i)-y_i)
+\end{equation*}
+
+where $L_{\epsilon}$ is the $\epsilon$-insensitive loss function defined as:
+
+\begin{equation*}
+L_{\epsilon}(x) = 
+\begin{cases}
+0, & \text{if } |x|\le \epsilon \\
+|x|-\epsilon, & \text{otherwise}
+\end{cases}
+\end{equation*}
+
+<img src="image/svr.png" width="500" height="500"> 
+
+Scikit-Learn’s LinearSVR class can perform linear SVM Regression, and SVR can perform kernelized
+SVM model for nonlinear regression tasks.
+
+**Example 5-4**
+
+Consider the function $y=f(x)=\sin(x)$. Create a dataset of $50$ instances with $x\in (0,5)$ and Build SVM regression models based on the data using three kernels: linear, rbf and polynomial of degree 3.
+
+```{python}
+from sklearn.svm import SVR
+
+ndata = 50
+# Create the training dataset
+np.random.seed(20)
+X = np.sort(5 * np.random.rand(ndata))
+y = np.sin(X)
+X = X[:, np.newaxis]
+
+# Fit SVR models
+svr_rbf = SVR(kernel='rbf', C=100, gamma=0.1, epsilon=0.1)
+svr_lin = SVR(kernel='linear', C=100, epsilon=0.1)
+svr_poly = SVR(kernel='poly', C=100, degree=3, epsilon=0.1, coef0=1)
+
+# Train the SVR models
+y_rbf = svr_rbf.fit(X, y).predict(X)
+y_lin = svr_lin.fit(X, y).predict(X)
+y_poly = svr_poly.fit(X, y).predict(X)
+
+# Plot the original data with the three models
+plt.figure(figsize=(10, 6))
+plt.scatter(X, y, color='darkorange', label='Data')
+plt.plot(X, y_rbf, color='navy', lw=2, label='RBF model')
+plt.plot(X, y_lin, color='c', lw=2, label='Linear model')
+plt.plot(X, y_poly, color='cornflowerblue', lw=2, label='Polynomial model')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.title('Support Vector Regression for $y=\sin(x)$')
+plt.legend();
+```
+
+## References
+
+1. Cortes, C. and Vapnik, V.N., Support vector networks. *Machine Learning*, 20(3): 273-297.
+
+2. Platt, J.C., Sequential Minimal Optimization: A fast algorithm for training support vector machines. Technical Report MSR-TR-98-14, Microsoft Research, 1998.
+
