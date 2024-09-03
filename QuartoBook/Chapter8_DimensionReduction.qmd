@@ -11,7 +11,8 @@ In an age of data explosion, we often see data in high dimensions. High-dimensio
 
 Principal component analysis (PCA) transforms data of a higher dimension to a new coordinate system with a lower dimension. During the transformation, the variance of the data, which can be considered as the information the data contain, is conserved as much as possible. The core of the algorithm is an eigendecomposition of the covariance matrix constructed with the mean-removed/centered data, leading to a set of eigenvectors, called **principal components**, and eigenvalues, which provides important information on the dimension of the reduced coordinates.
 
-Suppose we have a set of data points/observations $\{\boldsymbol{x}_1, \boldsymbol{x}_2, \dots, \boldsymbol{x}_N\}$, and each data point is $d$-dimensional, i.e., $\boldsymbol{x}_i=(x_i^1, x_i^2, \dots, x_i^d)^T $. Combining all the data points into a data matrix $X$, 
+Suppose we have a set of data points/observations $\{\boldsymbol{x}_1, \boldsymbol{x}_2, \dots, \boldsymbol{x}_N\}$, and each data point is $d$-dimensional, 
+i.e., $\boldsymbol{x}_i=(x_i^1, x_i^2, \dots, x_i^d)^T$. Combining all the data points into a data matrix $X$, 
 
 \begin{equation*}
 X = 

@@ -70,10 +70,10 @@ $$
 $$
 where the last step is for the sake of simpler computation only. Now, the maximum margin criterion is to solve the following optimization problem:
 $$
-\begin{align*}
+\begin{aligned}
 &\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 \\
 &\text{subject to } y_i (\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1,\quad 1\le i\le N
-\end{align*} 
+\end{aligned} 
 $$
 
 ## Dual Problem
@@ -84,10 +84,10 @@ L(\boldsymbol{w}, b, \boldsymbol{\alpha}) = \frac{1}{2}||\boldsymbol{w}||_2^2 + 
 $$
 where $\boldsymbol{\alpha} = (\alpha_1,\dots,\alpha_N)$. Taking derivative with respect to $\boldsymbol{w}$ and $b$, and set them to $0$. After substitution and organization (see Excercise 5-3), we have the dual problem:
 $$
-\begin{align*}
+\begin{aligned}
 &\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j \boldsymbol{x}_{i}^T\boldsymbol{x}_{j} \\
 &\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
-\end{align*} 
+\end{aligned} 
 $$
 After the dual problem is solved (numerically), for example, by the Sequential Minimal Optimization (SMO) algorithm (see Platt 1998), predictions for new data instances can be made by evaluating
 \begin{equation*}
@@ -128,16 +128,18 @@ Show the value of $b$ can be computed by
 
 ## Kernel Functions
 
-A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be $\phi(\boldsymbol{x})$. All of the above formulas (s(\boldsymbol{x}), primal problem, and dual problem) need to be changed so that $\boldsymbol{x}$, $\boldsymbol{x}_i$, and $\boldsymbol{x}_j$ will be replaced by $\phi(\boldsymbol{x})$, $\phi(\boldsymbol{x}_i)$, and $\phi(\boldsymbol{x}_j)$, respectively. The problem is computing inner products such as $\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)$ can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function $k(\boldsymbol{x}, \boldsymbol{y})$ exists and
-\begin{align*}
+A binary classification problem may not be linearly separable. In such cases, there may exist maps such that the original feature space is projected to a higher dimension and the data points become linearly separable in that higher-dimensional space. Let such a map be $\phi(\boldsymbol{x})$. All of the above formulas ($s(\boldsymbol{x})$, primal problem, and dual problem) need to be changed so that $\boldsymbol{x}$, $\boldsymbol{x}_i$, and $\boldsymbol{x}_j$ will be replaced by $\phi(\boldsymbol{x})$, $\phi(\boldsymbol{x}_i)$, and $\phi(\boldsymbol{x}_j)$, respectively. The problem is computing inner products such as $\phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)$ can be very expensive, especially considering that the dimension of the new feature space can be high, and even infinite. To avoid the direct calculation of the inner product, a trick is to imagine a function $k(\boldsymbol{x}, \boldsymbol{y})$ exists and
+$$
+\begin{aligned}
 k(\boldsymbol{x}_i, \boldsymbol{x}_j) = \phi(\boldsymbol{x}_i)^T\phi(\boldsymbol{x}_j)
-\end{align*}
+\end{aligned}
+$$
 That is, there is a function that calculates the inner product of mapped features $\phi(\boldsymbol{x})$ in the higher-dimensional space by evaluating a function defined in the original (low-dimensional) feature space. Such functions $k(\cdot, \cdot)$ are called **kernel functions**. With the kernel function, the dual problem can be rewritten as
 $$
-\begin{align*}
+\begin{aligned}
 &\text{arg}\max_{\boldsymbol{\alpha}}L(\boldsymbol{\alpha}) = \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} \sum_{i=1}^{N} \sum_{j=1}^{N} \alpha_{i} \alpha_{j} y_i y_j k(\boldsymbol{x}_{i},\boldsymbol{x}_{j}) \\
 &\text{subject to } \sum_{i=1}^N \alpha_iy_i = 0,  \quad \alpha_i \ge 0, \,\,\, 1\le i\le N
-\end{align*} 
+\end{aligned} 
 $$
 and the linear function $s(\boldsymbol{x})$ becomes
 \begin{equation*}
@@ -145,19 +147,19 @@ s(\boldsymbol{x}) = \sum_{i=1}^N\alpha_iy_ik(\boldsymbol{x}_i,\boldsymbol{x}) + 
 \end{equation*}
 Since, we are not sure what $\phi(\cdot)$ looks like, and thus finding the kernel function corresponding to $\phi(\cdot)$ is not possible. As a result, we often turn to some commonly used kernel functions as shown below, and in fact, each of them implicitly defines a map $\phi(\cdot)$.
 $$
-\begin{align*}
+\begin{aligned}
 \text{ Linear: } k(\boldsymbol{x}, \boldsymbol{y}) &= \boldsymbol{x}^T\boldsymbol{y} \\
 \text { Polynomial: } k(\boldsymbol{x}, \boldsymbol{y}) &= \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right)^{d} \\
 \text { Gaussian RBF: } k(\boldsymbol{x}, \boldsymbol{y}) &= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_2^{2}\right) \\
 \text { Sigmoid: } k(\boldsymbol{x}, \boldsymbol{y}) &= \tanh \left(\gamma \boldsymbol{x}^{T} \boldsymbol{y}+r\right) \\
 \text{ Laplacian: } k(\boldsymbol{x}, \boldsymbol{y}) &= \exp \left(-\gamma\|\boldsymbol{x}-\boldsymbol{y}\|_1\right)
-\end{align*}
+\end{aligned}
 $$
 These standard kernel functions can be combined to form new kernel functions. For instance, a linear combination of kernel functions is still a kernel function.
 
 ## Soft Margin
 
-Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary ($y_is(\boldsymbol{x}_i)\lt 0$), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target $+1$) on the wrong side, and one instance of the red square class (target $-1$). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called **soft margin classification**.
+Even if the data points are linearly separable (in the original feature space or with a kernel function), it may still not be a good idea to use such a decision boundary, because of overfitting and poor generalization. To alleviate this problem, we may consider a more flexible model that allows data points to appear on the wrong side of the decision boundary ($y_is(\boldsymbol{x}_i)< 0$), while keeping the margin as large as possible. As the figure shown below, there are two instances of the blue circle class (target $+1$) on the wrong side, and one instance of the red square class (target $-1$). All of them are colored slightly differently in the figure. Data points can also be inside the margin boundary, although it is on the right side of the decision boundary (there is one such point in the red square class in the figure). Such a method is called **soft margin classification**.
 
 <img src="image/softmargin.png" width="500" height="500"> 
 
@@ -189,18 +191,20 @@ plt.title('Hinge Loss');
 ```
 
 With the hinge loss, the soft margin objective function can be written as:
-
-\begin{align*}
+$$
+\begin{aligned}
 &\text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)) \\
 &= \text{arg min}_{\boldsymbol{w}, b}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\max(0, 1-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))
-\end{align*}
+\end{aligned}
+$$
 
 The hinge loss function penalizes more those points farther away from the boundary. Introduce **slack variables** $\xi_i\ge 0$, $1\le i\le N$, and $\xi_i = L_{\text{hinge}}(y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b))=|y_i-s(\boldsymbol{x}_i)|$. The objective function can be rewritten as
-
-\begin{align*}
+$$
+\begin{aligned}
 &\text{arg min}_{\boldsymbol{w}, b,\varepsilon_i}\frac{1}{2}||\boldsymbol{w}||_2^2 + C\sum_{i=1}^N\varepsilon_i \\
 &\text{subject to } y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b) \ge 1-\varepsilon_i,\quad \varepsilon_i\ge 0,\, i=1,\dots, N
-\end{align*}
+\end{aligned}
+$$
 This is still a quadratic problem and similarly a dual problem can be obtained using Lagrange multiplier.
 
 **Excercise 5-5**

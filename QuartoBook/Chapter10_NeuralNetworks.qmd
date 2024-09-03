@@ -35,7 +35,7 @@ where
 \Gamma(x) = 
 \begin{cases}
 1 & \text{if } x\ge 1 \\
-0 & \text{if } x\lt 1 
+0 & \text{if } x < 1 
 \end{cases}
 \end{equation*}
 
@@ -93,10 +93,11 @@ plt.title('Perceptron Decision Boundary');
 ## Multilayer Perceptron (MLP)
 
 If we add one or more hidden layers to the perceptron structure, we obtain a **multilayer perceptron** (see the first figure above). With a more complex structure, MLP is capable of solving more difficult problems for both classification and regression. When the number of hidden layers is large, the model is called a **deep neural network (DNN)**. Using DNNs to perform machine learning tasks is called **deep learning** (although there is no agreement on how many hidden layers is deep). The input layer takes the input features, each node of each hidden layer takes the weighted sum of the nodes from the previous layer and applies an activation function, and the output layer produces the output. There can be a single node in the output layer if the problem is a regression of binary classification. There can be more nodes for multi-class classification problems. For a multi-class classification problem, the activation function for the output layer is usually the **softa** function for a $K$-class classification problem is:
-
-\begin{align*}
+$$
+\begin{aligned}
 \Gamma(\boldsymbol{x}) = \Gamma(x_1, x_2, \dots, x_K) = \left(\frac{e^{x_1}}{\sum_{j=1}^K e^{x_j}}, \frac{e^{x_2}}{\sum_{j=1}^K e^{x_j}}, \dots, \frac{e^{x_K}}{\sum_{j=1}^K e^{x_j}}\right) \in (0, 1)^K
-\end{align*}
+\end{aligned}
+$$
 
 The training of an MLP involves finding the optimal weights and biases based on a selected loss function. The MSE function is natural for regression, and cross-entropy is appropriate for classification. To find the best hyperparameters, initial values (guesses) of the hyperparameters need to be first provided. Then the input layer receives the input features, and each node in the hidden layer closest to the input layer receives the weighted sum of the input nodes and applies the activation function. The subsequent hidden layers and the output layer follow the same process, and finally an output is produced corresponding to the initial hyperparameter values, and the loss function is evaluated at the output. This stage is called **forward propagation**. The second stage involves a process that reverses the previous one, called **back propagation**. Here, the gradient of the loss function with respect to the hyperparameters (weights and biases) are computed. With the gradient information, an efficient optimization algorithm such as *stochastic gradient descent (SGD)* can be used to search for the optimal hyperparameters. The core of the training of MLP is the back propagation. We use examples to illustrate how it works.
 
@@ -107,12 +108,12 @@ In the simple MLP for regression below, we have initialized all the weights and 
 <img src="image/backpropagation.png" width="800"> 
 
 Calculate the weighted sum of the inputs $I_1$ and $I_2$ for $H_1$, called the **net input** of $H_1$:
-
-\begin{align*}
+$$
+\begin{aligned}
 \text{net}_{H_1} &= w_{1} \cdot i_{1}+w_{2} \cdot i_{2}+b_{1} \\
 \text{net}_{H_1} &= 0.15 \cdot 0.05+0.2 \cdot 0.1+0.35=0.3775 \\
-\end{align*}
-
+\end{aligned}
+$$
 Use the sigmoid function to get the output of $H_1$: 
 
 \begin{equation*}
@@ -129,12 +130,13 @@ Repeat this process for the nodes in the output layer, using the output
 from the hidden layer nodes as inputs.
 
 For the output of $O_1$, we have: 
-
-\begin{align*}
+$$
+\begin{aligned}
 \text{net}_{O_1}&=w_{5} \cdot \text{out}_{H_1}+w_{6} \cdot \text {out}_{H_2}+b_{3} \\
 \text{net}_{O_1}&=0.4 \cdot 0.593269992+0.45 \cdot 0.596884378+0.6=1.105905967 \\
 \text{out}_{O_1}&=\frac{1}{1+e^{-\text{net}_{O_1}}}=\frac{1}{1+e^{-1.105905967}}=0.75136507
-\end{align*}
+\end{aligned}
+$$
 
 Similarly, for $O_2$ we get: 
 
@@ -161,11 +163,12 @@ the chain rule, we know that
 \end{equation*} 
 
 We now find each piece in this equation:
-
-\begin{align*}
+$$
+\begin{aligned}
 E_{\text{total}}&=\frac{1}{2}\left(\text{target}_{o 1}-\text { out }_{o 1}\right)^{2}+\frac{1}{2}\left(\operatorname{target}_{o 2}-\text { out }_{o 2}\right)^{2} \\
 \frac{\partial E_{\text{total}}}{\partial \text{out}_{O_1}}&=-\left(\text{target}_{O_1}-\text{out}_{O_1}\right)=-(0.01-0.75136507)=0.74136507
-\end{align*}
+\end{aligned}
+$$
 
 \begin{equation*}
 \begin{array}{l}
@@ -182,11 +185,12 @@ E_{\text{total}}&=\frac{1}{2}\left(\text{target}_{o 1}-\text { out }_{o 1}\right
 \end{equation*}
 
 Putting it all together: 
-
-\begin{align*}
+$$
+\begin{aligned}
 \frac{\partial E_{\text{total}}}{\partial w_{5}}&=\frac{\partial E_{\text{total}}}{\partial \text{out}_{O_1}} \cdot \frac{\partial \text{out}_{O_1}}{\partial \text{net}_{O_1}} \cdot \frac{\partial\text{net}_{O_1}}{\partial w_{5}} \\
 \frac{\partial E_{\text{total}}}{\partial w_{5}}&=0.74136507 \cdot 0.186815602 \cdot 0.593269992=0.082167041
-\end{align*}
+\end{aligned}
+$$
 
 Similarly, we can obtain
 $\frac{\partial \text{E}_{\text{total}} }{\partial w_6}$,

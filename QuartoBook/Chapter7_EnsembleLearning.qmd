@@ -292,7 +292,7 @@ Gradient Boosting builds models sequentially in the way that each subsequent mod
 
 Step 1. Initialize a model
 
-The initial model, $f_0(\boldsymbol{x}), $used in gradient boosting is typically a constant function, and the lost function $L$ is typically the Mean Squared Error (MSE). Hence the initial model is:
+The initial model, $f_0(\boldsymbol{x})$, used in gradient boosting is typically a constant function, and the lost function $L$ is typically the Mean Squared Error (MSE). Hence the initial model is:
 
 \begin{equation*}
 f_0(\boldsymbol{x}) = \arg \min_c \sum_{i=1}^{N} L(y_i, c)
@@ -318,7 +318,6 @@ Step 3. Fit the new individual model $f_m$ that approximates the residual $r_i^{
 
 \begin{equation*}
 f_m(\boldsymbol{x}) = \arg \min_{f} \sum_{i=1}^{N} \left(r_i^{(m)} - f(\boldsymbol{x}_i)\right)^2
-
 \end{equation*}
 
 Step 4. Update the ensemble model $F_m(\boldsymbol{x})$
