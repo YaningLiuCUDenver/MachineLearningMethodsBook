@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Ensemble Learning</title>
+<title>3&nbsp; Ensemble Learning – Machine Learning Methods</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,11 +58,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Chapter8_DimensionReduction.html" rel="next">
+<link href="./Chapter6_DecisionTrees.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -138,20 +141,110 @@ window.Quarto = {
 
 </head>
 
-<body class="fullcontent">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Chapter7_EnsembleLearning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Machine Learning Methods</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter5_SupportVectorMachine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter6_DecisionTrees.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter7_EnsembleLearning.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter8_DimensionReduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter10_NeuralNetworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#bagging-bootstrap-aggregating" id="toc-bagging-bootstrap-aggregating" class="nav-link active" data-scroll-target="#bagging-bootstrap-aggregating"><span class="header-section-number">3.1</span> Bagging (Bootstrap Aggregating)</a>
+  <ul class="collapse">
+  <li><a href="#out-of-bag-score" id="toc-out-of-bag-score" class="nav-link" data-scroll-target="#out-of-bag-score"><span class="header-section-number">3.1.1</span> Out-of-Bag Score</a></li>
+  </ul></li>
+  <li><a href="#random-forests" id="toc-random-forests" class="nav-link" data-scroll-target="#random-forests"><span class="header-section-number">3.2</span> Random Forests</a>
+  <ul class="collapse">
+  <li><a href="#importance-score-associate-with-random-forests" id="toc-importance-score-associate-with-random-forests" class="nav-link" data-scroll-target="#importance-score-associate-with-random-forests"><span class="header-section-number">3.2.1</span> Importance Score associate with Random Forests</a></li>
+  </ul></li>
+  <li><a href="#boosting" id="toc-boosting" class="nav-link" data-scroll-target="#boosting"><span class="header-section-number">3.3</span> Boosting</a>
+  <ul class="collapse">
+  <li><a href="#adaptive-boosting-adaboost" id="toc-adaptive-boosting-adaboost" class="nav-link" data-scroll-target="#adaptive-boosting-adaboost"><span class="header-section-number">3.3.1</span> Adaptive Boosting (AdaBoost)</a></li>
+  <li><a href="#gradient-boosting" id="toc-gradient-boosting" class="nav-link" data-scroll-target="#gradient-boosting"><span class="header-section-number">3.3.2</span> Gradient Boosting</a></li>
+  <li><a href="#optimal-ensemble-size" id="toc-optimal-ensemble-size" class="nav-link" data-scroll-target="#optimal-ensemble-size"><span class="header-section-number">3.3.3</span> Optimal Ensemble Size</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">3.4</span> References</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Ensemble Learning</h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></h1>
 </div>
 
 
@@ -169,8 +262,8 @@ window.Quarto = {
 
 
 <p>Ensemble learning is a machine learning technique that combines multiple models (classifiers or regressors, often called <strong>weak learners</strong>) to produce a more accurate and robust one than any individual model. The key idea behind ensemble learning is that by aggregating the predictions from several models, the strengths of individual models can be leveraged, and their weaknesses can be mitigated, thus improving the overall performance of modeling.</p>
-<section id="bagging-bootstrap-aggregating" class="level2">
-<h2 class="anchored" data-anchor-id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)</h2>
+<section id="bagging-bootstrap-aggregating" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="bagging-bootstrap-aggregating"><span class="header-section-number">3.1</span> Bagging (Bootstrap Aggregating)</h2>
 <p>The idea of <strong>bagging</strong>, short for <strong>Bootstrap Aggregating</strong>, is to train multiple models independently on different bootstrapped subsets of the training data, and then the predictions are averaged (for regressors) or voted upon (for classifiers). Bootstrapping is a statistical technique that generates multiple samples from a single (small) dataset by sampling with replacement so that estimates of the distribution of a statistic, e.g., the mean, variance, or confidence interval, can be made when the underlying distribution of the data is unknown. The following diagram illustrates how boostrapping works.</p>
 <p><img src="image/bootstrapping.png" width="1000"></p>
 <p>Bagging is particularly effective for reducing variance and preventing overfitting, especially in models with high variability such as decision trees. A high-variability model highly depends on the training dataset. If a different training set is used, then the model can behave quite differently. With bootstrapping, we are creating a group of approximately independent and identically distributed (i.i.d.) training sets, and an individual model (with high variance) is trained on each of the sets. By combining the models and averaging the predictions, the ensemble is likely less variable than any of its component learners.</p>
@@ -658,8 +751,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 </div>
 </div>
-<section id="out-of-bag-score" class="level3">
-<h3 class="anchored" data-anchor-id="out-of-bag-score">Out-of-Bag Score</h3>
+<section id="out-of-bag-score" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="out-of-bag-score"><span class="header-section-number">3.1.1</span> Out-of-Bag Score</h3>
 <p>A byproduct of bagging is that we have a measure to estimate how well the ensemble model performs for new data points, without actually having new data points or evaluating the ensemble model. The reason is that each individual model only sees part of the training data points, since the training set for each individual model is obtained from bootstrapping the entire training dataset. Hence, how the models perform on the data instances they did not see during the training process can be an estimator on how well the ensemble model generalizes. To be specific, a measure can be defined in this way: 1) for each data instance in the training set, we find all the models that did not use it during the training process; 2) evaluate these models at the data instance, and take the majority vote; 3) the majority vote is either equal to the true label or not; we compute the proportion of the data instances for which the true labels equal the majority votes. The proportion is defined as the <strong>out-of-bag score</strong> (<strong>OOB score</strong>). Mathematically, let <span class="math inline">\(D_i\)</span>, <span class="math inline">\(1\le i\le M\)</span> be the set of data points used to train model <span class="math inline">\(f_i\)</span>. Denote the out-of-bag majority vote for an instance <span class="math inline">\(\boldsymbol{x}\)</span> as <span class="math inline">\(f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}\)</span>. Then</p>
 <p><span class="math display">\[\begin{equation*}
 f^{\text{E}}_{\text{OOB}}(\boldsymbol{x}) = \text{arg}\max_{k\in\{1,2,\dots,K\}}\sum_{i=1}^M\mathbb{I}(f_i(\boldsymbol{x})=k)\cdot \mathbb{I}(\boldsymbol{x}\notin D_i)
@@ -1254,8 +1347,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 <p>For example, for the last data instance, among all the individual models not using it during the training stage, 90.2% of them predict it to be Verginica, while 9.8% predict it to be Versicolor (<span class="math inline">\(f^{\text{E}}_{\text{OOB}}=3\)</span>).</p>
 </section>
 </section>
-<section id="random-forests" class="level2">
-<h2 class="anchored" data-anchor-id="random-forests">Random Forests</h2>
+<section id="random-forests" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="random-forests"><span class="header-section-number">3.2</span> Random Forests</h2>
 <p>Random Forest (RF) is a variation of bagging. The motivation behind RF is to create training datasets for individual trees that are less dependent on each other (a collection of decorrelated trees). To this end, more randomness is introduced in the sampling process. For each individual model, a bootstrapped sample is first randomly selected. In the following process that construct a decision tree, for each node, instead of looking at all the possible choices of feature for a split and all the split points, RF randomly selects a subset of <span class="math inline">\(k\)</span> features, where <span class="math inline">\(k&lt;d\)</span>, a split criterion is decided based on the subset of features. Note that if <span class="math inline">\(k=d\)</span>, then the ensemble is simply a regular bagging of decision trees. Usually, <span class="math inline">\(k\)</span> is chosen as <span class="math inline">\(\log_2 d\)</span>. The randomness resulting from randomly sampling the features increase the independency of the individual models in the ensemble.</p>
 <p>Now we use <em>RandomForestClassifier</em> to perform RF with Python for the wine data set (https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-dataset).</p>
 <div id="1edb886d" class="cell" data-execution_count="6">
@@ -1285,8 +1378,8 @@ div.sk-label-container:hover .sk-estimator-doc-link.fitted:hover,
 </div>
 </div>
 <p>We achieved an accuracy of <span class="math inline">\(1.0\)</span>. It is not surprising that random forest performs so well. Actually, RF is used much more often than the other bagging techniques, and it is also commonly used as a baseline model, before more complicated models, such as deep neural networks, are attempted.</p>
-<section id="importance-score-associate-with-random-forests" class="level3">
-<h3 class="anchored" data-anchor-id="importance-score-associate-with-random-forests">Importance Score associate with Random Forests</h3>
+<section id="importance-score-associate-with-random-forests" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="importance-score-associate-with-random-forests"><span class="header-section-number">3.2.1</span> Importance Score associate with Random Forests</h3>
 <p>In Random Forests, feature importance scores are a byproduct that can be used to evaluate the significance of each feature in predicting the target variable. Feature importance is an important topic in machine learning interpretability/explainability. Many models do not carry built-in feature importance scores as RF, and hence one has to apply some model-agnostic methods to compute those scores. As a result, this is a key advantage of Random Forests, as they directly provide a way to understand which features are most influential in the model’s predictions.</p>
 <p>The most common method for calculating feature importance for RF is by considering the how much each feature contributes to reducing the impurity (e.g., Gini impurity) in the decision trees within the Random Forest. For each feature, the decrease in impurity is averaged over all the trees in the forest. A feature that results in a significant decrease in impurity is considered more important.</p>
 <div id="9da6ce64" class="cell" data-execution_count="7">
@@ -1320,11 +1413,11 @@ proline 0.1306809883643975</code></pre>
 <p>The results show that the features “alcohol”, “flavanoids”, “color_intensity”, “od280/od315_of_diluted_wines”, and “proline” play a more important role than the others in the predictions of the ensemble model.</p>
 </section>
 </section>
-<section id="boosting" class="level2">
-<h2 class="anchored" data-anchor-id="boosting">Boosting</h2>
+<section id="boosting" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="boosting"><span class="header-section-number">3.3</span> Boosting</h2>
 <p>Boosting works differently from bagging, where a collection of independent weak learners with high variance are combined to produce a model that generalizes well. For boosting, the idea is that a collection of sequential models with high bias are combined to produce a stronger predictive model. Each new model in the ensemble is trained sequentially with the purpose of correcting the errors made by the previous models. Two boosting techniques are commonly used: <strong>AdaBoost</strong> and <strong>Gradient Boosting</strong>. We start with the discussion of AdaBoost.</p>
-<section id="adaptive-boosting-adaboost" class="level3">
-<h3 class="anchored" data-anchor-id="adaptive-boosting-adaboost">Adaptive Boosting (AdaBoost)</h3>
+<section id="adaptive-boosting-adaboost" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="adaptive-boosting-adaboost"><span class="header-section-number">3.3.1</span> Adaptive Boosting (AdaBoost)</h3>
 <p>The idea of AdaBoost is to assign weights to training data instances. A subsequent model tries to put more weights on the instances that are predicted wrong by the previous models. The final ensemble model is a linear combination (weighted sum) of all the individual models with more accurate individual models assigned a larger coefficients (weights). The algorithm works as follows.</p>
 <p>Step 1. Initialize the weights for data instances</p>
 <ul>
@@ -1412,8 +1505,8 @@ f^{\text{E}}(\boldsymbol{x}) = \text{sign} \left( \sum_{m=1}^{M} \alpha_m \cdot 
 </div>
 </div>
 </section>
-<section id="gradient-boosting" class="level3">
-<h3 class="anchored" data-anchor-id="gradient-boosting">Gradient Boosting</h3>
+<section id="gradient-boosting" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="gradient-boosting"><span class="header-section-number">3.3.2</span> Gradient Boosting</h3>
 <p>Gradient Boosting builds models sequentially in the way that each subsequent model is trained to correct the residual errors of the combined predictions from previous models. The final model is a weighted sum of all the individual models. The name comes from the fact that it uses gradient descent to minimize the loss function. Here are the details of the algorithm.</p>
 <p>Step 1. Initialize a model</p>
 <p>The initial model, $f_0(), $used in gradient boosting is typically a constant function, and the lost function <span class="math inline">\(L\)</span> is typically the Mean Squared Error (MSE). Hence the initial model is:</p>
@@ -1588,8 +1681,8 @@ f(x) = 2x + \sin{x}
 </div>
 <p>Note that the plot in the bottom right corner is the same as that for the gradient boosting regressor with 3 components trained using the built-in class in the previous cell, confirming that either way we obtain the same ensemble model.</p>
 </section>
-<section id="optimal-ensemble-size" class="level3">
-<h3 class="anchored" data-anchor-id="optimal-ensemble-size">Optimal Ensemble Size</h3>
+<section id="optimal-ensemble-size" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="optimal-ensemble-size"><span class="header-section-number">3.3.3</span> Optimal Ensemble Size</h3>
 <p>We can use a validation set to monitor the model’s performance and perform <em>early stopping</em> when the model’s performance on the validation set starts to decrease. The Python code below does the job.</p>
 <div id="45460e26" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
@@ -1649,8 +1742,8 @@ f(x) = 2x + \sin{x}
 </div>
 </section>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<section id="references" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="references"><span class="header-section-number">3.4</span> References</h2>
 <ol type="1">
 <li>J. Friedman, T. Hastie, and R. Tibshirani, Additive logistic regression: a statistical view of boosting (With discussion and a rejoinder by the authors), Annals of Statistics, 28(2): 337-407.</li>
 </ol>
@@ -2079,6 +2172,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Chapter6_DecisionTrees.html" class="pagination-link" aria-label="Decision Trees">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Chapter8_DimensionReduction.html" class="pagination-link" aria-label="Dimension Reduction">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

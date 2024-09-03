@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Decision Trees</title>
+<title>2&nbsp; Decision Trees – Machine Learning Methods</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,11 +58,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Chapter7_EnsembleLearning.html" rel="next">
+<link href="./Chapter5_SupportVectorMachine.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -138,20 +141,98 @@ window.Quarto = {
 
 </head>
 
-<body class="fullcontent">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Chapter6_DecisionTrees.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Machine Learning Methods</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter5_SupportVectorMachine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter6_DecisionTrees.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter7_EnsembleLearning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter8_DimensionReduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter10_NeuralNetworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#decision-trees-for-classification" id="toc-decision-trees-for-classification" class="nav-link active" data-scroll-target="#decision-trees-for-classification"><span class="header-section-number">2.1</span> Decision Trees for Classification</a></li>
+  <li><a href="#decision-trees-for-regression" id="toc-decision-trees-for-regression" class="nav-link" data-scroll-target="#decision-trees-for-regression"><span class="header-section-number">2.2</span> Decision Trees for Regression</a></li>
+  <li><a href="#tree-pruning" id="toc-tree-pruning" class="nav-link" data-scroll-target="#tree-pruning"><span class="header-section-number">2.3</span> Tree Pruning</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Decision Trees</h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></h1>
 </div>
 
 
@@ -174,8 +255,8 @@ window.Quarto = {
 <p><img src="image/DT2.png" width="500" height="500"></p>
 <p>Decision tree can also be used to predict continuous quantities. The following diagram shows how a decision tree can help predict used car prices.</p>
 <p><img src="image/DT3.png" width="500" height="500"></p>
-<section id="decision-trees-for-classification" class="level2">
-<h2 class="anchored" data-anchor-id="decision-trees-for-classification">Decision Trees for Classification</h2>
+<section id="decision-trees-for-classification" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="decision-trees-for-classification"><span class="header-section-number">2.1</span> Decision Trees for Classification</h2>
 <p>To train a decision tree, the main goal is to decide which feature to choose at a node and at what value of the feature the node is divided. To this end, we need to define a measure that can be used to compare different choices and values of features for divisions. A <em>greedy optimization approach</em> is typically used, beginning with a single root node that represents the entire training dataset. The tree is then grown incrementally by adding nodes one at a time. At each step, there are a set of candidate features and their values in the input space for the split, and once they are chosen, a pair of leaf nodes will be added to the current tree corresponding to the split. Let <span class="math inline">\(\{(\boldsymbol{x}_1, y_1), \dots, (\boldsymbol{x}_N, y_N)\}\)</span> be a training dataset, where <span class="math inline">\(y_i\in\{1,2,\dots, K\}\)</span>, <span class="math inline">\(1\le i\le N\)</span>. Assume at a certain step, there has been a collection of leaf nodes <span class="math inline">\(L=\{L_1, L_2,\dots, L_M\}\)</span>, For each of the leaf nodes <span class="math inline">\(L_i\)</span>, and a candidate criterion for the split, <span class="math inline">\(c\)</span>, there will be two children for <span class="math inline">\(L_i\)</span>, denoted by <span class="math inline">\(L_i^0(c)\)</span> and <span class="math inline">\(L_i^1(c)\)</span>. To quantify the performance of the split, there are two commonly used measures, namely, <strong>information gain</strong> and <strong>Gini index</strong> (also known as <strong>Gini impurity</strong>). To define information gain, we first define the <strong>information entropy</strong> (or just <strong>entropy</strong>) as</p>
 <p><span class="math display">\[\begin{equation*}
 \Eta(L_i) = -\sum_{k=1}^Kp_k\log{p_k}
@@ -205,8 +286,8 @@ G(L_i, c) = \sum_{k=0}^1\frac{|L_i^k(c)|}{|L_i|}G(L_i^k(c))
 <li><p>Verify that a pure node’s Gini index is <span class="math inline">\(0\)</span>.</p></li>
 </ol>
 </section>
-<section id="decision-trees-for-regression" class="level2">
-<h2 class="anchored" data-anchor-id="decision-trees-for-regression">Decision Trees for Regression</h2>
+<section id="decision-trees-for-regression" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="decision-trees-for-regression"><span class="header-section-number">2.2</span> Decision Trees for Regression</h2>
 <p>The algorithm for building a decision tree for regression is similar to that for classification. The only difference is that we need to define a new performance measure for a split. Given the training dataset <span class="math inline">\(\{(\boldsymbol{x}_1, y_1), \dots, (\boldsymbol{x}_N, y_N)\}\)</span>, assume we have obtained a collection of leaf nodes <span class="math inline">\(L=\{L_1, L_2,\dots, L_M\}\)</span>. For a node <span class="math inline">\(L_i\)</span> and a candidate criterion for the split, <span class="math inline">\(c\)</span>, the resulting two children nodes are <span class="math inline">\(L_i^0(c)\)</span> and <span class="math inline">\(L_i^1(c)\)</span>. Predictions of the target corresponding to a children node should be made by taking the average of all the <span class="math inline">\(y_i\)</span>’s of those data points located in the node, which is equivalent to minimizing the sum-of-squares error in the node (see Excercise 6-3). Then, the optimal choice of <span class="math inline">\(c\)</span> will be the one that leads to the smallest residual sum-of-squares error.</p>
 <p>To stop the algorithm, we impose some stopping criterion, e.g., the reduction of residual sum-of-squares error falls below some threshold, or another one mentioned in the case of classification.</p>
 <p>The following figure shows such an example, where <span class="math inline">\(\boldsymbol{x} = (x_1,x_2)\)</span>, i.e., the feature space is two-dimensional. The first step splits the entire feature space into two regions depending on <span class="math inline">\(x_1&lt;x_{11}\)</span> or not; the second steps splits the region <span class="math inline">\(\{(x,y)|x&lt;x_{11}\}\)</span> into two subregions labeled 1 and 2, depending on <span class="math inline">\(x_2&lt;x_{21}\)</span> or not; the third step divides the region <span class="math inline">\(\{(x,y)|x&gt;x_{11}\}\)</span> into two subregions depending on <span class="math inline">\(x_2&lt;x_{22}\)</span> or not, and the resulting two subregions are further divided into regions 3 and 4, and 5 and 6, respectively, depending on if <span class="math inline">\(x_1&lt;x_{12}\)</span> and <span class="math inline">\(x_1&lt;x_{13}\)</span>.</p>
@@ -214,8 +295,8 @@ G(L_i, c) = \sum_{k=0}^1\frac{|L_i^k(c)|}{|L_i|}G(L_i^k(c))
 <p><strong>Exercise 6-3</strong></p>
 <p>Show that taking the average of all the <span class="math inline">\(y_i\)</span>’s of the data points located in a node as the predicted target is equivalent to minimizing the sum-of-squares error in the node.</p>
 </section>
-<section id="tree-pruning" class="level2">
-<h2 class="anchored" data-anchor-id="tree-pruning">Tree Pruning</h2>
+<section id="tree-pruning" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="tree-pruning"><span class="header-section-number">2.3</span> Tree Pruning</h2>
 <p>To avoid overfitting and increase generalization of decision trees, in the training process, it is a common practice to build a deep tree (e.g., to its maximum depth), and then trim the branches that contribute the least to the model’s predictive power. One commonly used method is the <strong>weakest link tree pruning</strong> method (also known as <strong>cost complexity pruning</strong>) Assume a large tree has been built. To apply weakest link tree pruning, we evaluate each subtree in the decision tree for its contribution to the tree’s performance, for example, using the misclassification rate for classification trees or residual sum-of-squares for regressin trees. Once we identify the “weakest link”, i.e., the subtree, if removed, that leads to the smallest increase in the error (misclassification rate or residual sum-of-squares), the weakest link is pruned (removed) from the tree. The process is repeated iteratively until a stopping criterion is satisfied, e.g.&nbsp;the smallest increase in error by removing a weakest link is bigger than a threshold.</p>
 <p><strong>Example 6-1</strong></p>
 <p>Build a decision tree classifier for the Iris Dataset to classify virginica and non-virginica. Use petal length and petal width as features.</p>
@@ -2503,6 +2584,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Chapter5_SupportVectorMachine.html" class="pagination-link" aria-label="Support Vector Machines">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Chapter7_EnsembleLearning.html" class="pagination-link" aria-label="Ensemble Learning">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

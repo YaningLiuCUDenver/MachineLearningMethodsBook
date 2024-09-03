@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Dimension Reduction</title>
+<title>4&nbsp; Dimension Reduction – Machine Learning Methods</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,11 +58,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./Chapter10_NeuralNetworks.html" rel="next">
+<link href="./Chapter7_EnsembleLearning.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -132,20 +135,99 @@ window.Quarto = {
 
 </head>
 
-<body class="fullcontent">
+<body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./Chapter8_DimensionReduction.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Machine Learning Methods</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter5_SupportVectorMachine.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter6_DecisionTrees.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Decision Trees</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter7_EnsembleLearning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter8_DimensionReduction.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./Chapter10_NeuralNetworks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#principal-component-analysis-pca" id="toc-principal-component-analysis-pca" class="nav-link active" data-scroll-target="#principal-component-analysis-pca"><span class="header-section-number">4.1</span> Principal Component Analysis (PCA)</a></li>
+  <li><a href="#choosing-m" id="toc-choosing-m" class="nav-link" data-scroll-target="#choosing-m"><span class="header-section-number">4.2</span> Choosing <span class="math inline">\(m\)</span></a></li>
+  <li><a href="#incremental-principal-component-analysis-ipca" id="toc-incremental-principal-component-analysis-ipca" class="nav-link" data-scroll-target="#incremental-principal-component-analysis-ipca"><span class="header-section-number">4.3</span> Incremental Principal Component Analysis (IPCA)</a></li>
+  <li><a href="#kernel-principal-component-analysis-kpca" id="toc-kernel-principal-component-analysis-kpca" class="nav-link" data-scroll-target="#kernel-principal-component-analysis-kpca"><span class="header-section-number">4.4</span> Kernel Principal Component Analysis (KPCA)</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Dimension Reduction</h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Dimension Reduction</span></h1>
 </div>
 
 
@@ -163,8 +245,8 @@ window.Quarto = {
 
 
 <p>In an age of data explosion, we often see data in high dimensions. High-dimensional data can be very complex, making it challenging to analyze and interpret. As the number of dimensions increases, it becomes more difficult to recognize patterns and the performance of machine learning algorithms is seriously affected. This is the so-called <strong>Curse of Dimensionality</strong>. In addition, high-dimensional data is challenging for visualization. As a result, dimensionality reduction, which involves reducing the number of features while retaining as much relevant information as possible, is a crucial step in machine learning. We will introduce a few of them, including principal component analysis, incremental principal component analysis, and kernel principal component analysis.</p>
-<section id="principal-component-analysis-pca" class="level2">
-<h2 class="anchored" data-anchor-id="principal-component-analysis-pca">Principal Component Analysis (PCA)</h2>
+<section id="principal-component-analysis-pca" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="principal-component-analysis-pca"><span class="header-section-number">4.1</span> Principal Component Analysis (PCA)</h2>
 <p>Principal component analysis (PCA) transforms data of a higher dimension to a new coordinate system with a lower dimension. During the transformation, the variance of the data, which can be considered as the information the data contain, is conserved as much as possible. The core of the algorithm is an eigendecomposition of the covariance matrix constructed with the mean-removed/centered data, leading to a set of eigenvectors, called <strong>principal components</strong>, and eigenvalues, which provides important information on the dimension of the reduced coordinates.</p>
 <p>Suppose we have a set of data points/observations <span class="math inline">\(\{\boldsymbol{x}_1, \boldsymbol{x}_2, \dots, \boldsymbol{x}_N\}\)</span>, and each data point is <span class="math inline">\(d\)</span>-dimensional, i.e., $_i=(x_i^1, x_i^2, , x_i<sup>d)</sup>T $. Combining all the data points into a data matrix <span class="math inline">\(X\)</span>,</p>
 <p><span class="math display">\[\begin{equation*}
@@ -314,8 +396,8 @@ Explained Variance Ratio: [0.96318131]</code></pre>
 </div>
 </div>
 </section>
-<section id="choosing-m" class="level2">
-<h2 class="anchored" data-anchor-id="choosing-m">Choosing <span class="math inline">\(m\)</span></h2>
+<section id="choosing-m" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="choosing-m"><span class="header-section-number">4.2</span> Choosing <span class="math inline">\(m\)</span></h2>
 <p>A common way to guide the choice of <span class="math inline">\(m\)</span> is to use the “<em>cumulative explained variance ratio</em>”. Suppose <span class="math inline">\(\tilde{m}\)</span> principal components are used (hence the reduced data has dimension <span class="math inline">\(\tilde{m}\)</span>), then the cumulative explained variance ratio is defined as the sum of the first <span class="math inline">\(\tilde{m}\)</span> largest eigenvalues divided by the sum of all the eigenvalues. This is an indicator of what percentage of variance is retained after transforming the data to a smaller dimension. For a preset threshold, say 90%, we will choose the number of components where the cumulative explained variance ratio first reaches the threshold to be <span class="math inline">\(m\)</span>.</p>
 <p>We go back to the previous iris data set example to illustrate the process.</p>
 <div id="8ce085c2" class="cell" data-execution_count="3">
@@ -462,8 +544,8 @@ The shape of y is:  (70000,)</code></pre>
 </div>
 <p>The two figures, original and reconstructed, are very similar.</p>
 </section>
-<section id="incremental-principal-component-analysis-ipca" class="level2">
-<h2 class="anchored" data-anchor-id="incremental-principal-component-analysis-ipca">Incremental Principal Component Analysis (IPCA)</h2>
+<section id="incremental-principal-component-analysis-ipca" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="incremental-principal-component-analysis-ipca"><span class="header-section-number">4.3</span> Incremental Principal Component Analysis (IPCA)</h2>
 <p>When a dataset is large, PCA can be very inefficient, due to the fact that the algorithm requires that all data have to be used at once. In some cases, data come in batches, and we would like the algorithm can handle incremental data, instead of repeating the training on all the data that are currently available. Incremental Principal Component Analysis (IPCA) is a variant of PCA that can handle data in smaller chunks. To achieve this, IPCA iteratively updates the data mean, covariance matrix, and the eigenvalues and eigenvectors through an incremental singular value decomposition (SVD) procedure, as new data arrive.</p>
 <p>We use the following example to illustrate how IPCA can be implemented in Python</p>
 <p><strong>Example 8-4</strong></p>
@@ -509,8 +591,8 @@ The shape of y is:  (70000,)</code></pre>
 </div>
 </div>
 </section>
-<section id="kernel-principal-component-analysis-kpca" class="level2">
-<h2 class="anchored" data-anchor-id="kernel-principal-component-analysis-kpca">Kernel Principal Component Analysis (KPCA)</h2>
+<section id="kernel-principal-component-analysis-kpca" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="kernel-principal-component-analysis-kpca"><span class="header-section-number">4.4</span> Kernel Principal Component Analysis (KPCA)</h2>
 <p>PCA is effective for data whose features show a linear relationship. For a high-dimensional non-linear feature space (think about spirals or concentric circles), PCA may not perform well (<span class="math inline">\(m\)</span> could be close to <span class="math inline">\(d\)</span>). For non-linear feature space, we may use the idea illustrated in the discussion of kernelized SVM, where we use kernels to implicitly project linearly inseparable data to a higher-dimensional (can be infinitely dimensional) space where they become linearly separable. Similarly, we can borrow the idea and use a kernel to implicitly project a nonlinear feature space to a higher-dimensional one, which hopefully are more linear. We now introduce the main mathematics behind KPCA, which is very similar to that of PCA.</p>
 <p>Suppose the implicitly defined mapping from the original feature space (<span class="math inline">\(d\)</span>-dimensional) to a higher-dimensional (<span class="math inline">\(D\)</span>-dimensional, <span class="math inline">\(d\ll D\)</span>) one is <span class="math inline">\(\boldsymbol{\phi}(\boldsymbol{x})\)</span>. Then in the higher-dimensional space, the data points become <span class="math inline">\(\{\boldsymbol{\phi}(\boldsymbol{x}_1), \boldsymbol{\phi}(\boldsymbol{x}_2), \dots, \boldsymbol{\phi}(\boldsymbol{x}_N)\}\)</span>. We will then build a data matrix each row of which represents a data points, and then build a covariance matrix <span class="math inline">\(C\)</span> (assuming the features have a mean of <span class="math inline">\(0\)</span> for now):</p>
 <p><span class="math display">\[\begin{equation*}
@@ -1148,6 +1230,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./Chapter7_EnsembleLearning.html" class="pagination-link" aria-label="Ensemble Learning">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ensemble Learning</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./Chapter10_NeuralNetworks.html" class="pagination-link" aria-label="Neural Networks">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Neural Networks</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 
